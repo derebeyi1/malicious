@@ -1,0 +1,655 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% load temptags %}
+{#{% load media %}#}
+{% block title %} Company {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+{% endblock stylesheets %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-12 mb-4">
+            <div class="card border-0 shadow components-section">
+                <div class="card-header">
+                    <div class="d-flex">
+                        <div class="me-auto">
+                            <h1 class="h6">Menu</h1>
+                        </div>
+                        <div class="row mb-4">
+                            {% if messages %}
+                                {% for message in messages %}
+                                    <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-left: 0px;margin-right: 0px">
+                                        {{ message }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        <div class="ms-auto">
+                            <a href="#" id="addBtn">
+                                <i class="fa fa-plus" style="font-size: 18px; color: green" data-toggle="tooltip" title="Create Menu"></i>
+                            </a>
+                            <a href="#" id="hideBtn" style="display:none">
+                                <i class="fa fa-minus" style="font-size: 18px; color: green" data-toggle="tooltip" title="Close"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div id="form" style="display:none">
+                    <div class="card-body">
+                        <div class="tmt_card components-section">
+                            <div class="card-body">
+                                <form id="menu-form" method="post" action="" enctype="multipart/form-data" novalidate>
+                                    {% csrf_token %}
+                                    {#                            {{ form.as_p }}#}
+                                    <div class="row mb-4">
+                                        <div class="col-lg-12 col-sm-12">
+                                            <div class="input-group">
+                                                <input type="hidden" id="id_id" name="id" value="">
+                                            </div>
+                                            <div class="input-group mb-4">
+                                                <label>Parent Item</label>
+                                                <div class="input-group">
+                                                    {{ form.parentid }}
+                                                </div>
+                                                <span class="text-error"></span>
+                                            </div>
+                                            <div class="form-group mb-4">
+                                                <label for="title">Menu Title</label>
+                                                <div class="input-group">
+                                                    {{ form.title }}
+                                                </div>
+                                                <span class="text-error"></span>
+                                            </div>
+                                            <div class="form-group mb-4">
+                                                <label for="address">Address</label>
+                                                <div class="input-group">
+                                                    {{ form.address }}
+                                                </div>
+                                                <span class="text-error"></span>
+                                            </div>
+                                            <div class="form-group mb-4">
+                                                <label for="icon">Icon</label>
+                                                <div class="input-group">
+                                                    {{ form.icon }}
+                                                </div>
+                                                <span class="text-error"></span>
+                                            </div>
+                                            <div class="form-group mb-4">
+                                                <label for="is_seen">Is Seen</label>
+                                                <div class="input-group">
+                                                    {{ form.is_seen }}
+                                                </div>
+                                            </div>
+                                            <div class="form-group mb-4">
+                                                <label for="is_active">Is Active</label>
+                                                <div class="input-group">
+                                                    {{ form.is_active }}
+                                                </div>
+                                            </div>
+                                            <div class="form-group mb-4">
+                                                <label for="has_item">Has Item</label>
+                                                <div class="input-group">
+                                                    {{ form.has_item }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="width:100%">
+                                        <div style="margin: 0 auto; text-align: center;">
+                                            <a href="#" id="cancel" class="btn btn-secondary" style="margin-right: 30px">Cancel</a>
+                                            <a href="#" id="updatebtn" class="btn btn-behance" style="margin-right: 30px">Update</a>
+                                            <a href="#" id="createbtn" class="btn btn-behance" style="margin-right: 30px;">Create</a>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {#                {% getUserMenuForAdmin user.id %}#}
+                <div style="overflow-x:auto;">
+                    <div id="example_wrapper" class="dataTables_wrapper no-footer">
+                        <div class="dt-buttons">
+                        </div>
+                        <table id="example" class="table table-valign-middle simple-tree-table dataTable no-footer" aria-describedby="example_info">
+                            <thead style="background-color: #6C7AE0">
+                            <tr>
+                                <th class="sorting_disabled" rowspan="1" colspan="1" aria-label="CRUD" style="width: 93.7917px;">
+                                    <span class="p-column-title">CRUD</span>
+                                </th>
+                                <th class="sorting_disabled" rowspan="1" colspan="1" aria-label="Title" style="width: 126.667px;">
+                                    <span class="p-column-title">Title</span>
+                                </th>
+                                <th class="sorting" tabindex="0" aria-controls="example" rowspan="1" colspan="1" aria-label="Address: activate to sort column ascending" style="width: 136.792px;">
+                                    <span class="p-column-title">Address</span>
+                                </th>
+                                <th class="sorting" tabindex="0" aria-controls="example" rowspan="1" colspan="1" aria-label="Icon: activate to sort column ascending" style="width: 134.458px;">
+                                    <span class="p-column-title">Icon</span>
+                                </th>
+                                <th class="sorting" tabindex="0" aria-controls="example" rowspan="1" colspan="1" aria-label="Show in Menu?: activate to sort column ascending" style="width: 98.6667px;">
+                                    <span class="p-column-title">Show in Menu?</span>
+                                </th>
+                                <th class="sorting" tabindex="0" aria-controls="example" rowspan="1" colspan="1" aria-label="Is Active?: activate to sort column ascending" style="width: 65.5694px;">
+                                    <span class="p-column-title">Is Active?</span>
+                                </th>
+                                <th class="sorting" tabindex="0" aria-controls="example" rowspan="1" colspan="1" aria-label="Has Child?: activate to sort column ascending" style="width: 72.6667px;">
+                                    <span class="p-column-title">Has Child?</span>
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for menu in menus|in_category:1%}
+                                <tr data-node-id="{{menu.id}}" style="background-color: #ECEAF4" class="simple-tree-table-root odd simple-tree-table-opened">
+                                    <td id="crud_{{menu.id}}">
+                                        <span class="simple-tree-table-handler simple-tree-table-icon" style="margin-left: 0px;"></span>
+                                        <a href="#" class="upd" id="Button{{ menu.id }}" itemid="{{ menu.id }}">
+                                            <i class="fas fa-pen" data-toggle="tooltip" title="Update Menu"></i>
+                                        </a>
+                                        <a href="{% url 'home:menu_delete' id=menu.id %}" onclick="return confirm('Are you sure to delete {{ menu.name }}?')"/>
+                                        <i class="fas fa-trash-alt" style="font-size: 18px; color: #ce0f0f;" data-toggle="tooltip" title="Delete Menu"></i>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="#">{{ menu.title }}</a>
+                                    </td>
+                                    <td>{{ menu.address }}</td>
+                                    <td>{{ menu.icon }}</td>
+                                    <td>{{ menu.is_seen }}</td>
+                                    <td>{{ menu.is_active }}</td>
+                                    <td>{{ menu.has_item }}</td>
+                                </tr>
+                                {% for smenu in menus|in_category:menu.id %}
+                                    <tr data-node-id="{{ smenu.id }}" data-node-pid="{{ menu.id }}" style="background-color: rgb(255, 255, 255);" class="simple-tree-table-empty even">
+                                        <td><span class="simple-tree-table-handler simple-tree-table-icon" style="margin-left: 20px;"></span>
+                                            <a href="#" class="upd" id="Button{{ smenu.id }}" itemid="{{ smenu.id }}">
+                                                <i class="fas fa-pen" data-toggle="tooltip" title="Update Menu"></i>
+                                            </a>
+                                            <a href="{% url 'home:menu_delete' id=smenu.id %}" onclick="return confirm('Are you sure to delete {{ smenu.name }}?')"/>
+                                            <i class="fas fa-trash-alt" style="font-size: 18px; color: #ce0f0f;" data-toggle="tooltip" title="Delete Menu"></i>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <span class="simple-tree-table-handler simple-tree-table-icon" style="margin-left: 0px;"></span>{{ smenu.title }}
+                                        </td>
+                                        <td>
+                                            <span class="simple-tree-table-handler simple-tree-table-icon" style="margin-left: 0px;"></span>{{ smenu.address }}
+                                        </td>
+                                        <td>
+                                            <span class="simple-tree-table-handler simple-tree-table-icon" style="margin-left: 0px;"></span>{{ smenu.icon }}
+                                        </td>
+                                        <td>
+                                            <span class="simple-tree-table-handler simple-tree-table-icon" style="margin-left: 0px;"></span>{{ smenu.is_seen }}
+                                        </td>
+                                        <td>
+                                            <span class="simple-tree-table-handler simple-tree-table-icon" style="margin-left: 0px;"></span>{{ smenu.is_active }}
+                                        </td>
+                                        <td>
+                                            <span class="simple-tree-table-handler simple-tree-table-icon" style="margin-left: 0px;"></span>{{ smenu.has_item }}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {#                                <div class="card border-0 components-section">#}
+                {#                                    <div class="card-body">#}
+                {#                                        <div class="tmt_card components-section">#}
+                {#                                            <div class="card-body">#}
+                {#                                                <table id="example" class="table table-striped table-valign-middle" aria-describedby="example_info" style="width:100%">#}
+                {#                                                    <thead class="tmt_thead">#}
+                {#                                                    <tr><th class="tmt_th sorting_disabled" rowspan="1" colspan="1" aria-label="Crud" style="width: 57px;"><span class="p-column-title">CRUD</span></th>#}
+                {#                                                        <th class="tmt_th sorting_disabled" rowspan="1" colspan="1" aria-label="Title" style="width: 162px;"><span class="p-column-title">Title</span></th>#}
+                {#                                                        <th class="tmt_th sorting_disabled" rowspan="1" colspan="1" aria-label="Address" style="width: 162px;"><span class="p-column-title">Address</span></th>#}
+                {#                                                        <th class="tmt_th sorting_disabled" rowspan="1" colspan="1" aria-label="Icon" style="width: 162px;"><span class="p-column-title">Icon</span></th>#}
+                {#                                                        <th class="tmt_th sorting_disabled" rowspan="1" colspan="1" aria-label="Is Seen" style="width: 162px;"><span class="p-column-title">Is Seen?</span></th>#}
+                {#                                                        <th class="tmt_th sorting_disabled" rowspan="1" colspan="1" aria-label="Is Active" style="width: 162px;"><span class="p-column-title">Is Active?</span></th>#}
+                {#                                                        <th class="tmt_th sorting_disabled" rowspan="1" colspan="1" aria-label="Has Item" style="width: 162px;"><span class="p-column-title">Has Item?</span></th>#}
+                {#                                                        <th class="tmt_th">CRUD</th>#}
+                {#                                                        <th class="tmt_th">Title</th>#}
+                {#                                                        <th class="tmt_th">Address</th>#}
+                {#                                                        <th class="tmt_th">Icon</th>#}
+                {#                                                        <th class="tmt_th">Show in Menu?</th>#}
+                {#                                                        <th class="tmt_th">Is Active?</th>#}
+                {#                                                        <th class="tmt_th">Has Child?</th>#}
+                {#                                                    </tr></thead>#}
+                {#                                                    <tbody id="myTable">#}
+                {#                                                    {% for menu in menus|in_category:1%}#}
+                {#                                                        <tr data-node-id="{{ menu.id }}" style="background-color: #ECEAF4" class="simple-tree-table-root simple-tree-table-opened odd">#}
+                {#                                                            <td id="crud_{{menu.id}}">#}
+                {#                                                                <a href="#" class="upd" id="Button{{ menu.id }}" itemid="{{ menu.id }}">#}
+                {#                                                                    <i class="fas fa-pen upd" data-toggle="tooltip" title="Update Menu"></i>#}
+                {#                                                                </a>#}
+                {#                                                                <a href="{% url 'home:menu_delete' id=menu.id %}" onclick="return confirm('Are you sure to delete {{ menu.name }}?')"/>#}
+                {#                                                                <i class="fas fa-trash-alt" style="font-size: 18px; color: #ce0f0f;" data-toggle="tooltip" title="Delete Menu"></i>#}
+                {#                                                                </a>#}
+                {#                                                            </td>#}
+                {#                                                            <td><span class="simple-tree-table-handler simple-tree-table-icon" style="margin-left: 20px;"></span>#}
+                {#                                                            <td>{{ menu.title }}</td>#}
+                {#                                                            <td>{{ smenu.address }}</td>#}
+                {#                                                            <td>{{ smenu.icon }}</td>#}
+                {#                                                            <td>{{ smenu.is_seen }}</td>#}
+                {#                                                            <td>{{ smenu.is_active }}</td>#}
+                {#                                                            <td>{{ smenu.has_item }}</td>#}
+                {#                                                            <td></td>#}
+                {#                                                        </tr>#}
+                {#                                                        {% for smenu in menus|in_category:menu.id %}#}
+                {#                                                            <tr data-node-id="{{ smenu.id }}" data-node-pid="{{ menu.id }}" style="background-color: #FFFFFF" class="simple-tree-table-empty even">#}
+                {#                                                                <td id="crud_{{menu.id}}">#}
+                {#                                                                <a href="#" class="upd" id="Button{{ menu.id }}" itemid="{{ menu.id }}">#}
+                {#                                                                    <i class="fas fa-pen upd" data-toggle="tooltip" title="Update Menu"></i>#}
+                {#                                                                </a>#}
+                {#                                                                <a href="{% url 'home:menu_delete' id=menu.id %}" onclick="return confirm('Are you sure to delete {{ menu.name }}?')"/>#}
+                {#                                                                <i class="fas fa-trash-alt" style="font-size: 18px; color: #ce0f0f;" data-toggle="tooltip" title="Delete Menu"></i>#}
+                {#                                                                </a>#}
+                {#                                                                </td>#}
+                {#                                                                <td><span class="simple-tree-table-handler simple-tree-table-icon" style="margin-left: 20px;"></span>#}
+                {#                                                                <td>{{ smenu.title }}</td>#}
+                {#                                                                <td>{{ smenu.address }}</td>#}
+                {#                                                                <td>{{ smenu.icon }}</td>#}
+                {#                                                                <td>{{ smenu.is_seen }}</td>#}
+                {#                                                                <td>{{ smenu.is_active }}</td>#}
+                {#                                                                <td>{{ smenu.has_item }}</td>#}
+                {#                                                            </tr>#}
+                {#                                                        {% endfor %}#}
+                {#                                                    {% endfor %}#}
+                {#                                                                {% getGroupMenusForAuth groupid %}#}
+                {#                                                    </tbody>#}
+                {#                                                </table>#}
+                {#                                            </div>#}
+                {#                                        </div>#}
+                {#                                    </div>#}
+                {#                                </div>#}
+                <div>
+                    <div id="divBackground" style="position: fixed; z-index: 999; height: 100%; width: 100%; top: 0; left:0; background-color: Black; filter: alpha(opacity=60); opacity: 0.6; -moz-opacity: 0.8;display:none">
+                    </div>
+                </div>
+                <div id="dialog" style="display: none">
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+{% block scripts %}
+    <script>
+        let table;
+        jQuery(function($) {
+            $("#updatebtn").click(function(e) {
+                e.stopImmediatePropagation()
+                e.preventDefault();
+                var data = new FormData($("#menu-form")[0]);
+                var id = $("#id_id").val();
+                $.ajax({
+                    url: "{% url 'home:menus' %}",
+                    type: 'POST',
+                    processData: false,
+                    contentType: false,
+                    data: data,
+                    success: function(response) {
+                        var data = response['data']
+                        var crud = '<a href="#" class="upd" id="Button'+id+'" itemid="'+id+'">' +
+                            '<i class="fas fa-pen upd" data-toggle="tooltip" title="" data-bs-original-title="Update Menu" aria-label="Update Menu"></i>' +
+                            '</a>&nbsp;' +
+                            '<a href="/home/menus/delete/'+id+'/" onclick="return confirm(' + "'" + 'Are you sure to delete' + "'" + ')">' +
+                            '<i class="fas fa-trash-alt del" data-toggle="tooltip" title="" data-bs-original-title="Delete Menu" aria-label="Delete Menu"></i>' +
+                            '</a>';
+                        var objKeys = ["crud", "title", "address", "icon", "is_seen",
+                            "is_active", "has_item"];
+                        var arr = get_visible_columns()
+                        var aa = arr.concat(objKeys)
+                        var bb = aa.filter((item,pos) => aa.indexOf(item) === pos)
+                        $('#id_' + id + ' td').each(function(i) {
+                            if (bb[i] == 'crud') {
+                                $('#crud_' + id).html(crud)
+                            } else
+                                $(this).text(data[objKeys[i]]);
+                        });
+                        var message = response['message']
+                        {#alert(message)#}
+                        $("#message").text(message);
+                        $("#messagediv").show();
+                        $("#menu-form").trigger('reset');
+                        $("#form").hide();
+                        $("#addBtn").show();
+                        $("#hideBtn").hide();
+                    },
+                    error: function (response) {
+                        var data = response.responseJSON['data'];
+                        const obj = JSON.parse(data);
+                        var result = [];
+                        for(var i in obj)
+                            result.push([i, obj[i][0]['message']]);
+                        var $input = $("input[name='name']");
+                        {#if ($("#menu-form").next('span').length) $("input").nextAll('span').empty();#}
+                        $("#menu-form").find('span').each(function(){
+                            $(this).empty();
+                        });
+                        for (var i in result) {
+                            var key = result[i][0];
+                            var val = result[i][1];
+                            let $input = $("#id_" + key);
+                            var span1 = $input.parent().parent().find(".text-error");
+                            span1.css("color", "red");
+                            span1.text(val);
+                        }
+                    }
+                });
+            });
+            $("#createbtn").click(function(e) {
+                e.stopImmediatePropagation()
+                e.preventDefault();
+                var data = new FormData($("#menu-form")[0]);
+                var id = $("#id_id").val();
+                $.ajax({
+                    url: "{% url 'home:menus' %}",
+                    type: 'POST',
+                    processData: false,
+                    contentType: false,
+                    data: data,
+                    success: function(response) {
+                        var data = response['data']
+                        var crud = '<a href="#" class="upd" id="Button'+id+'" itemid="'+id+'">' +
+                            '<i class="fas fa-pen upd" data-toggle="tooltip" title="" data-bs-original-title="Update Menu" aria-label="Update Menu"></i>' +
+                            '</a>&nbsp;' +
+                            '<a href="/home/menus/delete/'+id+'/" onclick="return confirm(' + "'" + 'Are you sure to delete' + "'" + ')">' +
+                            '<i class="fas fa-trash-alt del" data-toggle="tooltip" title="" data-bs-original-title="Delete Menu" aria-label="Delete Menu"></i>' +
+                            '</a>';
+                        var objKeys = ["crud", "title", "address", "icon", "is_seen",
+                            "is_active", "has_item"];
+                        var arr = get_visible_columns()
+                        var aa = arr.concat(objKeys)
+                        var bb = aa.filter((item,pos) => aa.indexOf(item) === pos)
+                        var row = $('<tr id="id_'+id+'" class="odd">');
+                        table.row.add([
+                            crud,
+                            data['title'] ,
+                            data['address'] ,
+                            data['icon'] ,
+                            data['is_seen'] ,
+                            data['is_active'] ,
+                            data['has_item'] ,]).draw()
+                        var message = response['message']
+                        $("#message").text(message);
+                        $("#messagediv").show();
+                        $("#menu-form").trigger('reset');
+                        $("#form").hide();
+                        $("#addBtn").show();
+                        $("#hideBtn").hide();
+                    },
+                    error: function (response) {
+                        var data = response.responseJSON['data'];
+                        const obj = JSON.parse(data);
+                        var result = [];
+                        for(var i in obj)
+                            result.push([i, obj[i][0]['message']]);
+                        var $input = $("input[title='title']");
+                        if ($("#menu-form").next('span').length) $("input").nextAll('span').empty();
+                        for (var i in result) {
+                            var key = result[i][0];
+                            var val = result[i][1];
+                            let $input = $("#id_" + key);
+                            var span1 = $input.parent().parent().find(".text-error");
+                            span1.css("color", "red");
+                            span1.text(val);
+                        }
+                    }
+                });
+            });
+            $(document).on('click', '.upd', function(e) {
+                e.stopImmediatePropagation()
+                e.preventDefault();
+                var id = $(this).attr('itemid')
+                url = "{% url 'home:menus' %}",
+                    $.ajax({
+                        type: 'GET',
+                        url: url,
+                        data: {"id": id, "csrfmiddlewaretoken": '{{ csrf_token }}'},
+                        success: function (response) {
+                            $("#addBtn").hide();
+                            $("#form").show();
+                            $("#hideBtn").show();
+                            $("#createbtn").hide();
+                            $("#updatebtn").show();
+                            $("#menu-form").trigger('reset');
+                            $("#id_title").focus();
+                            var form = JSON.parse(response["data"]);
+                            var fields = form[0]["fields"];
+                            var pk = form[0]["pk"];
+                            $('#id_parentid').val(fields["parentid"]).change();
+                            $('#id_title').val(fields["title"]);
+                            $('#id_id').val(pk);
+                            $("#id_address").val(fields["address"]);
+                            $("#id_icon").val(fields["icon"]);
+                            $("#id_is_active").prop( "checked", fields["is_active"]);
+                            $("#id_has_item").prop( "checked", fields["has_item"]);
+                            $("#id_is_seen").prop( "checked", fields["is_seen"]);
+                        },
+                        error: function (response) {
+                            console.log(response)
+                            alert("error")
+                        }
+                    });
+            });
+            $('#example').simpleTreeTable({
+                expander: $('#expander'),
+                collapser: $('#collapser'),
+                store: 'session',
+                storeKey: 'simple-tree-table-basic',
+            });
+            $("#addBtn").click(function(e) {
+                e.preventDefault();
+                $("#form").show();
+                $("#hideBtn").show();
+                $("#createbtn").show();
+                $("#updatebtn").hide();
+                $(this).hide();
+            });
+            $("#hideBtn").click(function(e) {
+                e.preventDefault();
+                $("#form span").text("");
+                $("#form").hide();
+                $("#menu-form").trigger('reset');
+                $("#addBtn").show();
+                $("#createbtn").hide();
+                $("#updatebtn").show();
+                $(this).hide();
+            });
+            $("#cancel").click(function(e) {
+                e.preventDefault();
+                $("#form").hide();
+                $("#menu-form").trigger('reset');
+                $("#addBtn").show();
+                $("#hideBtn").hide();
+                {#$('span').text('');#}
+            })
+            $("#dialog").dialog({
+                autoOpen: false,
+                modal: true,
+                title: "Details",
+                buttons: {
+                    Close: function () {
+                        $(this).dialog('close');
+                    }
+                }
+            });
+            $("#Button2").click(function (e) {
+                e.preventDefault();
+                var href = $(this).attr('title');
+                $.ajax({
+                    type: "POST",
+                    url: href,
+                    data: "",
+                    {#data: "{name: '" + $("#txtName").val() + "'}",#}
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (r) {
+                        $("#dialog").html(r.d);
+                        $("#dialog").dialog("open");
+                    }
+                });
+            });
+            {% if form_error %}
+                $("#form").show();
+                $("#hideBtn").show();
+                $("#addBtn").hide();
+            {% endif %}
+            $('#id_logo').on('change', function() {
+                $("#imglogo").attr("src",'/'+this.value);
+            });
+            $('a.toggle-vis').on( 'click', function (e) {
+                e.preventDefault();
+
+                // Get the column API object
+                var column = table.column( $(this).attr('data-column') );
+                {#alert(column.value())#}
+                // Toggle the visibility
+                column.visible( !column.visible() );
+            } );
+            var table = $('#example').DataTable( {
+                lengthMenu: [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
+                stateSave: false,
+                {#stateDuration: -1,#}
+                paging: false,
+                order: [],
+                {#aaSorting: [],#}
+                {#bDestroy: true,#}
+                {#searching: false,#}
+                {#"scrollY": "200px",#}
+                {#"paging": false,#}
+                dom: 'Blrtip',
+                columns: [
+                        { name: "crud" },
+                        { name: "title" },
+                        { name: "address" },
+                        { name: "icon" },
+                        { name: "is_seen" },
+                        { name: "is_active" },
+                        { name: "has_item" },
+                    ],
+                columnDefs: [
+                    {#{#}
+                    {#    targets: 0,#}
+                    {#    className: 'noVis'#}
+                    {#,#}
+                    {#{#}
+                    {#    targets: 1,#}
+                    {#    className: 'noVis'#}
+                    {#,#}
+                    {
+                        targets: [0, 1], /* table column index */
+                        orderable: false, /* true or false */
+                    }
+                ],
+                {#buttons: [#}
+                {#    {#}
+                {#        extend: 'colvis',#}
+                {#        columns: ':not(.noVis)'#}
+                {#    }#}
+                {#],#}
+            } );
+            {#$("#cart").on('hide', function () {#}
+            {#    window.location.reload();#}
+            {#);#}
+            $('[data-toggle="tooltip"]').tooltip();
+
+            $("#divBackground").on('hide', function () {
+                window.location.reload();
+            });
+
+            {#$("#myInput").on("keyup", function() {#}
+            {#    var value = $(this).val().toLowerCase();#}
+            {#    $("#myTable tr").filter(function() {#}
+            {#        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)#}
+            {#    });#}
+            {#);#}
+
+            $('#sayi').on('change', function () {
+                var url = $(this).val(); // get selected value
+                if (url) { // require a URL
+                    window.location = url; // redirect
+                }
+                return false;
+            });
+        });
+        var popUpObj;
+        function updBtn(id) {
+            var table = $('#example').DataTable();
+            var row = $('#tr' + id)
+            {#alert(row + ':::>' + row.data())#}
+            var data = table.rows().data();
+            var dataarray = table.rows().data().toArray()
+            {#alert('The table has ' + data.length + ' records' + dataarray);#}
+            console.log(table.row(id).data());
+        }
+        function get_visible_columns() {
+            var all_columns = table.settings().init().columns;
+            var visible_columns = [];
+            for (var i in all_columns) {
+                if (table.column(all_columns[i].name + ':name').visible()) {
+                    visible_columns.push(all_columns[i].name);
+                }
+            }
+            {#alert(visible_columns)#}
+            return visible_columns
+            {#return visible_columns.join(', ');#}
+        }
+        function showDialog(url){
+            {#e.preventDefault();#}
+            {#var href = $(this).attr('title');#}
+            $.ajax({
+                type: "POST",
+                url: url,
+                headers: {//<==
+                    "X-CSRFTOKEN": "{{ csrf_token }}"//<==
+                },
+                data: '{ "csrfmiddlewaretoken": "{{csrf_token}}"}',
+                {#data: "{name: '" + $("#txtName").val() + "'}",#}
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (r) {
+                    $("#dialog").html(r.d);
+                    $("#dialog").dialog("open");
+                }
+            });
+        }
+        function showModalPopUp(url, w, h)
+        {
+            popUpObj=window.open(url,
+                "ModalPopUp",
+                "toolbar=no," +
+                "scrollbars=no," +
+                "location=no," +
+                "statusbar=no," +
+                "menubar=no," +
+                "resizable=0," +
+                "width="+w+"," +
+                "height="+h+"," +
+                "left = 150," +
+                "top=30"
+            );
+            popUpObj.focus();
+            LoadModalDiv();
+        }
+        function popupWindow(url, windowName, win, w, h) {
+            const y = win.top.outerHeight / 2 + win.top.screenY - ( h / 2);
+            const x = win.top.outerWidth / 2 + win.top.screenX - ( w / 2);
+            var targetWin = win.open(url, windowName, `toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=${w}, height=${h}, top=${y}, left=${x}`);
+            return targetWin;
+        }
+        function LoadModalDiv()
+        {
+            var bcgDiv = document.getElementById("divBackground");
+            bcgDiv.style.display="block";
+        }
+        function HideModalDiv() {
+            var bcgDiv = document.getElementById("divBackground");
+            bcgDiv.style.display = "none";
+        }
+    </script>
+
+{% endblock scripts %}

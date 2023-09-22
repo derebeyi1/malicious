@@ -1,0 +1,80 @@
+{% load static %}
+{% load temptags %}
+<div id="sidemenu">
+
+</div>
+<script>
+    jQuery(function($) {
+        let sidemenu = localStorage.getItem('sidemenu');
+        {#alert(sidemenu);#}
+        if (sidemenu === null || sidemenu === 'null' || sidemenu === 'undefined' || sidemenu === '') {
+            var id = $(this).val();
+            // GET AJAX request
+            $.ajax({
+                type: 'GET',
+                url: "{% url 'home:get_user_menu' %}",
+                data: {"id": {{ request.user.id }}},
+                success: function (response) {
+                    if (response != '') {
+                        {#alert('success1:' + response)#}
+                        localStorage.setItem('sidemenu', response);
+                        $('#sidemenu').html(response)
+                    }
+                },
+                error: function (response) {
+                    alert('error:' + response)
+                    console.log(response)
+                }
+            });
+        } else {
+            $('#sidemenu').html(sidemenu)
+        };
+        $('.nav-link, .d-flex , .justify-content-between, .align-items-center').on('click', function(e) {
+            sil = $(this).attr("data-bs-target")
+            if(!localStorage.getItem(sil)) {
+                // Check if theres anything in localstorage already
+                localStorage.setItem(sil, "true");
+            } else {
+                if(localStorage.getItem(sil) === "true") {
+                    // toggle was on, turning it off
+                    localStorage.setItem(sil, "false");
+                }
+                else if(localStorage.getItem(sil) === "false") {
+                    // toggle was off, turning it on
+                    localStorage.setItem(sil, "true")
+                }
+            }
+        });
+        $(".nav-link, .d-flex , .justify-content-between, .align-items-center").each(function (index, element) {
+            sil = $(this).attr("data-bs-target")
+            if (localStorage.getItem(sil) == 'true') {
+                $(sil).addClass("show"); //you can list several class names
+            } else {
+                $(sil).removeClass("show");
+            }
+        });
+        {#$('.nav-link, .anchor').on('click', function(e) {#}
+        {#    url = $(this).attr("href");#}
+        {#    if (url == '/home/friends/') {#}
+        {#        e.preventDefault();#}
+        {##}
+        {#        $.ajax({#}
+        {#            type: 'GET',#}
+        {#            url: url,#}
+                    {#data: {"id": {{ request.user.id }}},#}
+        {#            success: function (response) {#}
+                        {#if (response != '') {#}
+                        {#alert('success1:' + response)#}
+                        {#    localStorage.setItem('sidemenu', response);#}
+                        {#    $('#sidemenu').html(response)#}
+                        {##}
+        {#            },#}
+        {#            error: function (response) {#}
+        {#                alert('error:' + response)#}
+        {#                console.log(response)#}
+        {#            }#}
+        {#        });#}
+        {#    }#}
+        {#);#}
+    });
+</script>

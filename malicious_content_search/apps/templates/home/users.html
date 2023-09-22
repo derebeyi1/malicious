@@ -1,0 +1,581 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block title %} Users {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+{% endblock stylesheets %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-12 mb-4">
+            <div class="card border-0 shadow components-section">
+                <div class="card-header">
+                    <div class="d-flex">
+                        <div class="me-auto">
+                            <h1 class="h6">Users</h1>
+                        </div>
+                        <div id="messagediv" class="row mb-4" style="display:none">
+                            <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-left: 0px;margin-right: 0px">
+                                <span id="message"></span>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        </div>
+                        <div class="ms-auto">
+                            <a href="#" id="addBtn">
+                                <i class="fa fa-plus" style="font-size: 18px; color: green" data-toggle="tooltip" title="Create User"></i>
+                            </a>
+                            <a href="#" id="hideBtn" style="display:none">
+                                <i class="fa fa-minus" style="font-size: 18px; color: green" data-toggle="tooltip" title="Close"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="form" style="display:none">
+                        <form id="user-form" method="post" action="" enctype="multipart/form-data" novalidate>
+                            {% csrf_token %}
+                            {#                            {{ form.as_p }}#}
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="input-group">
+                                        <input type="hidden" id="id_id" name="id" value="">
+                                    </div>
+                                    <div class="form-group mb-4">
+                                        <label for="username">Username</label>
+                                        <div class="input-group">
+                                            {{ form.username }}
+                                        </div>
+                                        <span class="text-error">{{ form.username.errors }}</span>
+                                    </div>
+                                    <div class="form-group mb-4">
+                                        <label for="email">E-Mail</label>
+                                        <div class="input-group">
+                                            {{ form.email }}
+                                        </div>
+                                        <span class="text-error">{{ form.email.errors }}</span>
+                                    </div>
+                                    <div class="form-group mb-4">
+                                        <label for="first_name">First Name</label>
+                                        <div class="input-group">
+                                            {{ form.first_name }}
+                                        </div>
+                                        <span class="text-error">{{ form.first_name.errors }}</span>
+                                    </div>
+                                    <div class="form-group mb-4">
+                                        <label for="last_name">Last Name</label>
+                                        <div class="input-group">
+                                            {{ form.last_name }}
+                                        </div>
+                                        <span class="text-error">{{ form.last_name.errors }}</span>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-4">
+                                            <div class="form-group mb-4">
+                                                <label for="is_superuser">Is Super User</label>
+                                                <div class="input-group">
+                                                    {{ form.is_superuser }}
+                                                </div>
+                                                <span class="text-error">{{ form.is_superuser.errors }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="form-group mb-4">
+                                                <label for="is_active">Is Active</label>
+                                                <div class="input-group">
+                                                    {{ form.is_active }}
+                                                </div>
+                                                <span class="text-error">{{ form.is_active.errors }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="form-group mb-4">
+                                                <label for="group">Role</label>
+                                                <div class="input-group">
+                                                    {{ form.group }}
+                                                </div>
+                                                <span class="text-error">{{ form.group.errors }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group mb-4" style="overflow-y: scroll; height:400px;">
+                                        <label for="companies">Companies</label>
+                                        <div class="input-group">
+                                            {{ form.companies }}
+                                        </div>
+                                        <span class="text-error">{{ form.companies.errors }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="width:100%">
+                                <div style="margin: 0 auto; text-align: center;">
+                                    <a href="#" id="cancel1" class="btn btn-primary" style="margin-right: 30px">Cancel</a>
+                                    <a href="#" id="updatebtn" class="btn btn-behance" style="margin-right: 30px">Update</a>
+                                    <a href="#" id="createbtn" class="btn btn-behance" style="margin-right: 30px;">Create</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <table id="example" class="table table-striped table-valign-middle" style="width:100%">
+                        <thead class="tmt_thead">
+                        <tr>
+                            <th class="tmt_th">CRUD</th>
+                            <th class="tmt_th">User Name</th>
+                            <th class="tmt_th">First Name</th>
+                            <th class="tmt_th">Last Name</th>
+                            <th class="tmt_th">E-Mail</th>
+                            <th class="tmt_th">Last Login</th>
+                            <th class="tmt_th">Joined date</th>
+                            <th class="tmt_th">Is Active</th>
+                            <th class="tmt_th">Is Super User</th>
+                        </tr>
+                        </thead>
+                        <tbody id="myTable">
+                        {% for user in page_obj %}
+                            <tr id="id_{{user.id}}">
+                                <td id="crud_{{user.id}}">
+                                    <a href="#" class="upd" id="Button{{ user.id }}" itemid="{{ user.id }}">
+                                        <i class="fas fa-pen" style="font-size: 18px; color: #6C7AE0" data-toggle="tooltip" title="Update User"></i>
+                                    </a>
+                                    <a href="#" class="delBtn" id="Button{{ user.id }}" itemid="{{ user.id }}"/>
+                                    <i class="fas fa-trash-alt" style="font-size: 18px; color: #ce0f0f;" data-toggle="tooltip" title="Delete User"></i>
+                                    </a>
+                                    <a href="#" id="Button2" onclick="showModalPopUp('{% url 'home:user_companies' id=user.id %}', 800, 500)">
+                                        <i class="ion ion-briefcase" style="font-size: 18px; color: #6C7AE0" data-toggle="tooltip" title="Show Companies"></i>
+                                    </a>
+                                </td>
+                                <td>{{user.username}}</td>
+                                <td>{{user.first_name }}</td>
+                                <td>{{user.last_name }}</td>
+                                <td>{{user.email}}</td>
+                                <td>{{user.last_login}}</td>
+                                <td>{{user.date_joined}}</td>
+                                <td>{{user.is_active}}</td>
+                                <td>{{user.is_superuser}}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <div>
+                        <div id="divBackground" style="position: fixed; z-index: 999; height: 100%; width: 100%; top: 0; left:0; background-color: Black; filter: alpha(opacity=60); opacity: 0.6; -moz-opacity: 0.8;display:none">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
+{% block scripts %}
+
+    <script>
+        let table;
+        jQuery(function($) {
+            $("#updatebtn").click(function(e) {
+                e.stopImmediatePropagation()
+                e.preventDefault();
+                var data = new FormData($("#user-form")[0]);
+                var id = $("#id_id").val();
+                $.ajax({
+                    url: "{% url 'home:users' %}",
+                    type: 'POST',
+                    processData: false,
+                    contentType: false,
+                    data: data,
+                    success: function(response) {
+                        var data = response['data']
+                        var crud = '<a href="#" class="upd" id="Button'+id+'" itemid="'+id+'">' +
+                            '<i class="fas fa-pen" style="font-size: 18px; color: #6C7AE0" data-toggle="tooltip" title="" data-bs-original-title="Update User" aria-label="Update User"></i>' +
+                            '</a>&nbsp;' +
+                            '<a href="#" class="delBtn" id="Button'+id+'" itemid="'+id+'">' +
+                            '<i class="fas fa-trash-alt" style="font-size: 18px; color: #ce0f0f;" data-toggle="tooltip" title="" data-bs-original-title="Delete User" aria-label="Delete User"></i>' +
+                            '</a>' +
+                            '<a href="#" id="Button2" onclick="showModalPopUp(' + '{% url 'home:user_companies' id=user.id %}' + ', 800, 500)">' +
+                            '<i class="ion ion-briefcase" style="font-size: 18px; color: #6C7AE0" data-toggle="tooltip" title="Show Companies"></i>' +
+                            '</a>';
+                        var objKeys = ["crud", "username", "first_name", "last_name", "email",
+                            "last_login", "date_joined", "is_active", "is_superuser"];
+                        var arr = get_visible_columns();
+                        var aa = arr.concat(objKeys)
+                        var bb = aa.filter((item,pos) => aa.indexOf(item) === pos)
+                        $('#id_' + id + ' td').each(function(i) {
+                            if (bb[i] == 'crud') {
+                                $('#crud_' + id).html(crud)
+                            } else {
+                                $(this).text(data[objKeys[i]]);
+                            }
+                        });
+
+                        var message = response['message']
+                        $("#message").text(message);
+                        $("#messagediv").show();
+                        $("#user-form").trigger('reset');
+                        $("#form").hide();
+                        $("#addBtn").show();
+                        $("#hideBtn").hide();
+                    },
+                    error: function (response) {
+                        var data = response.responseJSON['data'];
+                        const obj = JSON.parse(data);
+                        var result = [];
+                        for(var i in obj)
+                            result.push([i, obj[i][0]['message']]);
+                        var $input = $("input[username='username']");
+                        if ($("#user-form").next('span').length) $("input").nextAll('span').empty();
+                        for (var i in result) {
+                            var key = result[i][0];
+                            var val = result[i][1];
+                            var $input = $("input[username='" + key + "']");
+                            var span1 = $input.parent().parent().find(".text-error");
+                            span1.css("color", "red");
+                            span1.text(val);
+                        }
+                    }
+                });
+            });
+            $("#createbtn").click(function(e) {
+                e.stopImmediatePropagation()
+                e.preventDefault();
+                var data = new FormData($("#user-form")[0]);
+                {#var id = $("#id_id").val();#}
+                $.ajax({
+                    url: "{% url 'home:users' %}",
+                    type: 'POST',
+                    processData: false,
+                    contentType: false,
+                    data: data,
+                    success: function(response) {
+                        var data = response['data'];
+                        var id = data['id'];
+                        var crud = '<a href="#" class="upd" id="Button'+id+'" itemid="'+id+'">' +
+                            '<i class="fas fa-pen" style="font-size: 18px; color: #6C7AE0" data-toggle="tooltip" title="" data-bs-original-title="Update User" aria-label="Update User"></i>' +
+                            '</a>&nbsp;' +
+                            '<a href="#" class="delBtn" id="Button'+id+'" itemid="'+id+'">' +
+                            '<i class="fas fa-trash-alt" style="font-size: 18px; color: #ce0f0f;" data-toggle="tooltip" title="" data-bs-original-title="Delete User" aria-label="Delete User"></i>' +
+                            '</a>' +
+                            '<a href="#" id="Button2" onclick="showModalPopUp(' + '{% url 'home:user_companies' id=user.id %}' + ', 800, 500)">' +
+                            '<i class="ion ion-briefcase" style="font-size: 18px; color: #6C7AE0" data-toggle="tooltip" title="Show Companies"></i>' +
+                            '</a>';
+                        var objKeys = ["crud", "username", "first_name", "last_name", "email",
+                            "last_login", "date_joined", "is_active", "is_superuser"];
+                        var arr = get_visible_columns();
+                        var aa = arr.concat(objKeys);
+                        var bb = aa.filter((item,pos) => aa.indexOf(item) === pos);
+                        var row = $('<tr id="id_'+id+'" class="odd">');
+                        table.row.add([
+                            crud,
+                            data['username'] ,
+                            data['first_name'] ,
+                            data['email'] ,
+                            data['last_name'] ,
+                            data['last_login'] ,
+                            data['date_joined'] ,
+                            data['is_active'] ,
+                            data['is_superuser'] ]).draw()
+                        var message = response['message']
+                        $("#message").text(message);
+                        $("#messagediv").show();
+                        $("#user-form").trigger('reset');
+                        $("#form").hide();
+                        $("#addBtn").show();
+                        $("#hideBtn").hide();
+                    },
+                    error: function(response){
+                        var data = response.responseJSON['data'];
+                        const obj = JSON.parse(data);
+                        var result = [];
+                        for(var i in obj)
+                            result.push([i, obj[i][0]['message']]);
+                        var $input = $("input[username='username']");
+                        if ($("#user-form").next('span').length) $("input").nextAll('span').empty();
+                        for (var i in result) {
+                            var key = result[i][0];
+                            var val = result[i][1];
+                            var $input = $("input[username='" + key + "']");
+                            var span1 = $input.parent().parent().find(".text-error");
+                            span1.css("color", "red");
+                            span1.text(val);
+                        }
+                    }
+                });
+            });
+            $(document).on('click', '.upd', function(e) {
+                {#e.preventDefault();#}
+                e.stopImmediatePropagation()
+                e.preventDefault();
+                var id = $(this).attr('itemid')
+                url = "{% url 'home:users' %}",
+                    $.ajax({
+                        type: 'GET',
+                        url: url,
+                        data: {"id": id, "csrfmiddlewaretoken": '{{ csrf_token }}'},
+                        success: function (response) {
+                            $("#addBtn").hide();
+                            $("#form").show();
+                            $("#hideBtn").show();
+                            $("#createbtn").hide();
+                            $("#updatebtn").show();
+                            $("#user-form").trigger('reset');
+                            $("#id_username").focus();
+                            var form = JSON.parse(response["instance"]);
+                            var fields = form[0]["fields"];
+                            var pk = form[0]["pk"];
+                            $('#id_username').val(fields["username"]);
+                            $('#id_id').val(pk);
+                            $("#id_first_name").val(fields["first_name"]);
+                            $("#id_last_name").val(fields["last_name"]);
+                            $("#id_email").val(fields["email"]);
+                            $("#id_last_login").val(fields["last_login"]);
+                            $("#id_date_joined").val(fields["date_joined"]);
+                            $("#id_is_active").val(fields["is_active"]);
+                            $("#id_is_superuser").val(fields["is_superuser"]);
+
+                            let companies = fields["companies"];
+                            $("#id_companies").find('li label :checkbox').each(function(i){
+                                let id = $(this).val();
+                                if (companies.find(i => i == id))
+                                    $(this).prop( "checked", true);
+                            });
+                            $("#id_group").val(fields["group"][0]).change();
+                        },
+                        error: function (response) {
+                            console.log(response)
+                            alert("error")
+                        }
+                    });
+            });
+
+            {#$(document).on('click', '.delBtn', function() {#}
+            $(".delBtn").click(function(e) {
+                e.stopImmediatePropagation()
+                e.preventDefault();
+                if (confirm('Are you sure to delete?')) {
+                    var id = $(this).attr('itemid')
+                    {#var table = $('#example').DataTable#}
+                    {#url = "/home/users/delete/";#}
+                    url = "{% url 'home:user_delete' %}"
+                    $.ajax({
+                        type: 'GET',
+                        data: {'id': id},
+                        url: url,
+                        success: function (response) {
+                            alert('success');
+                            var message = response['message']
+                            $("#message").text(message);
+                            $("#messagediv").show();
+                            table.row($("#id_" + id)).delete();
+                            $("#id_" + id)
+                            {#var crud = '<a href="#" class="upd" id="Button'+id+'" itemid="'+id+'">' +#}
+                            {#    '<i class="fas fa-pen" style="font-size: 18px; color: #6C7AE0" data-toggle="tooltip" title="" data-bs-original-title="Update User" aria-label="Update User"></i>' +#}
+                            {#    '</a>&nbsp;' +#}
+                            {#    '<a href="/home/users/delete/'+id+'/" onclick="return confirm(' + "'" + 'Are you sure to delete ?' + "'" + ')">' +#}
+                            {#    '<i class="fas fa-trash-alt" style="font-size: 18px; color: #ce0f0f;" data-toggle="tooltip" title="" data-bs-original-title="Delete User" aria-label="Delete User"></i>' +#}
+                            {#    '</a>&nbsp;' +#}
+                            {#    '<a href="#" id="Button2" onclick="showModalPopUp(' + "'" + '/home/users/users/'+id+'/' + "'" + ', 825, 525)">' +#}
+                            {#    '<i class="ion ion-person-stalker" style="font-size: 18px; color: #6C7AE0" data-toggle="tooltip" title="" data-bs-original-title="Show Users" aria-label="Show Users"></i>' +#}
+                            {#    '</a>';#}
+                            {#var objKeys = ["crud", "username", "first_name", "last_name", "email",#}
+                            {#    "last_login", "date_joined", "is_active", "is_superuser"];#}
+                            {#var arr = get_visible_columns();#}
+                            {#var aa = arr.concat(objKeys)#}
+                            {#var bb = aa.filter((item,pos) => aa.indexOf(item) === pos)#}
+                            {#$('#id_' + id + ' td').each(function(i) {#}
+                            {#    if (bb[i] == 'crud') {#}
+                            {#        $('#crud_' + id).html(crud)#}
+                            {#    } else {#}
+                            {#        $(this).text(data[objKeys[i]]);#}
+                            {#    }#}
+                            {#);#}
+                        },
+                        error: function (response) {
+                            console.log(response)
+                            alert("error")
+                        }
+                    });
+                };
+
+            });
+            $("#dialog").dialog({
+                autoOpen: false,
+                modal: true,
+                title: "Details",
+                buttons: {
+                    Close: function () {
+                        $(this).dialog('close');
+                    }
+                }
+            });
+            $("#Button2").click(function (e) {
+                e.preventDefault();
+                var href = $(this).attr('title');
+                $.ajax({
+                    type: "POST",
+                    url: href,
+                    data: "",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (r) {
+                        $("#dialog").html(r.d);
+                        $("#dialog").dialog("open");
+                    }
+                });
+            });
+
+            $('a.toggle-vis').on( 'click', function (e) {
+                e.preventDefault();
+
+                // Get the column API object
+                var column = table.column( $(this).attr('data-column') );
+                // Toggle the visibility
+                column.visible( !column.visible() );
+            } );
+            $("#addBtn").click(function(e) {
+                e.preventDefault();
+                $("#form").show();
+                $("#hideBtn").show();
+                $("#createbtn").show();
+                $("#updatebtn").hide();
+                $(this).hide();
+            });
+            $("#hideBtn").click(function(e) {
+                e.preventDefault();
+                $("#form").hide();
+                {#$("#user-form").trigger('reset');#}
+                $("#addBtn").show();
+                $("#createbtn").hide();
+                $("#updatebtn").show();
+                $(this).hide();
+            });
+            $("#cancel1").click(function(e) {
+                e.preventDefault();
+                $("#form").hide();
+                {#$("#user-form").trigger('reset');#}
+                $("#addBtn").show();
+                $("#hideBtn").hide();
+            });
+            table = $('#example').DataTable( {
+                lengthMenu: [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
+                stateSave: true,
+                stateDuration: -1,
+                scrollX: true,
+                dom: 'Blfrtip',
+                columns: [
+                    { name: 'crud' },
+                    { name: 'username' },
+                    { name: 'first_name', defaultContent: '' },
+                    { name: 'last_name', defaultContent: '' },
+                    { name: 'email', defaultContent: '' },
+                    { name: 'last_login', defaultContent: '' },
+                    { name: 'date_joined',defaultContent: '' },
+                    { name: 'is_active', defaultContent: '' },
+                    { name: 'is_superuser' },
+                ],
+                columnDefs: [
+                    {
+                        targets: 0,
+                        className: 'noVis'
+                    },
+                    {
+                        targets: 1,
+                        className: 'noVis'
+                    }
+                ],
+                buttons: [
+                    {
+                        extend: 'colvis',
+                        columns: ':not(.noVis)'
+                    }
+                ],
+            } );
+            $('[data-toggle="tooltip"]').tooltip();
+
+            $("#divBackground").on('hide', function () {
+                window.location.reload();
+            });
+
+            $('#sayi').on('change', function () {
+                var url = $(this).val(); // get selected value
+                if (url) { // require a URL
+                    window.location = url; // redirect
+                }
+                return false;
+            });
+        });
+        var popUpObj;
+
+        function get_visible_columns() {
+            var all_columns = table.settings().init().columns;
+            var visible_columns = [];
+            for (var i in all_columns) {
+                if (table.column(all_columns[i].name + ':name').visible()) {
+                    visible_columns.push(all_columns[i].name);
+                }
+            }
+            return visible_columns
+        }
+
+        function updBtn(id) {
+            var table = $('#example').DataTable();
+            var row = $('#tr' + id)
+            var data = table.rows().data();
+            var dataarray = table.rows().data().toArray()
+            console.log(table.row(id).data());
+        }
+
+        function showDialog(url) {
+            $.ajax({
+                type: "POST",
+                url: url,
+                headers: {//<==
+                    "X-CSRFTOKEN": "{{ csrf_token }}"//<==
+                },
+                data: '{ "csrfmiddlewaretoken": "{{csrf_token}}"}',
+                {#data: "{name: '" + $("#txtName").val() + "'}",#}
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (r) {
+                    $("#dialog").html(r.d);
+                    $("#dialog").dialog("open");
+                }
+            });
+        }
+
+        function showModalPopUp(url, w, h) {
+            popUpObj = window.open(url,
+                "ModalPopUp",
+                "toolbar=no," +
+                "scrollbars=no," +
+                "location=no," +
+                "statusbar=no," +
+                "menubar=no," +
+                "resizable=0," +
+                "width=" + w + "," +
+                "height=" + h + "," +
+                "left = 240," +
+                "top=50"
+            );
+            popUpObj.focus();
+            LoadModalDiv();
+        }
+
+        function popupWindow(url, windowName, win, w, h) {
+            const y = win.top.outerHeight / 2 + win.top.screenY - (h / 2);
+            const x = win.top.outerWidth / 2 + win.top.screenX - (w / 2);
+            var targetWin = win.open(url, windowName, `toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=${w}, height=${h}, top=${y}, left=${x}`);
+            return targetWin;
+        }
+
+        function LoadModalDiv() {
+            var bcgDiv = document.getElementById("divBackground");
+            bcgDiv.style.display = "block";
+        }
+
+        function HideModalDiv() {
+            var bcgDiv = document.getElementById("divBackground");
+            bcgDiv.style.display = "none";
+        }
+    </script>
+{% endblock scripts %}

@@ -1,0 +1,162 @@
+{% extends "layouts/base-fullscreen.html" %}
+{% load static %}
+{#{% load media %}#}
+{% block title %} User Companies {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+{% endblock stylesheets %}
+
+{% block content %}
+
+    <div id="divcompanies" class="row">
+        <div class="col-12 mb-4">
+            <div class="card border-0 shadow components-section">
+                <div class="card-header">
+                    <div class="d-flex">
+                        <div class="me-auto">
+                            <h1 class="h6">Companies of {{ user }}</h1>
+                        </div>
+                        <div class="row mb-4">
+                            {% if messages %}
+                                {% for message in messages %}
+                                    <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-left: 0px;margin-right: 0px">
+                                        {{ message }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="form" style="display:none">
+                        <form id="company-form" method="post" action="" enctype="multipart/form-data" novalidate>
+                            {% csrf_token %}
+                            <div class="row mb-4">
+                                <div class="col-lg-4 col-sm-6">
+                                    <div class="form-group mb-4">
+                                        <label for="companyname">Company Name</label>
+                                        <div class="input-group">
+                                            {{ form.name }}
+                                        </div>
+                                        <span class="text-error">{{ form.name.errors }}</span>
+                                    </div>
+                                    <div class="form-group mb-4">
+                                        <label for="licensetype">License Type</label>
+                                        <div class="input-group">
+                                            {{ form.licensetype }}
+                                        </div>
+                                        <span class="text-error">{{ form.licensetype.errors }}</span>
+                                    </div>
+                                    <div class="form-group mb-4">
+                                        <div class="input-group">
+                                            {{ form.apikey }}
+                                            <div class="input-group-append">
+                                                <i id="genapikey" class="fas fa-key" style="font-size: 32px; color: #6C7AE0" data-toggle="tooltip" title="Generate Api Key" aria-label="apikey"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {#                        <div class="row mb-4">#}
+                                <div class="col-lg-4 col-sm-6">
+                                    <div class="form-group mb-4">
+                                        <label for="country">Country</label>
+                                        <div class="input-group">
+                                            {{ form.country }}
+                                        </div>
+                                        <span class="text-error">{{ form.country.errors }}</span>
+                                    </div>
+                                    <div class="form-group mb-4">
+                                        <label for="licenseenddate">License End Date</label>
+                                        <div class="input-group">
+                                            {{ form.licenseenddate }}
+                                        </div>
+                                        <span class="text-error">{{ form.licenseenddate.errors }}</span>
+                                    </div>
+                                </div>
+                                {#                        </div>#}
+                                {#                        <div class="row mb-4">#}
+                                <div class="col-lg-4 col-sm-6">
+                                    <div class="form-group mb-4">
+                                        <label for="logo">Logo</label>
+                                        <div class="input-group">
+                                            {{ form.logo }}
+                                            {% if form.logo and form.logo != '' %}
+                                                <img id="id_logo" src="/apps/media/{{ form.logo.value }}" style="width: 50px; height: 50px;">
+                                            {% else %}
+                                                <img id="img1" src=" " style="width: 50px; height: 50px;">
+                                            {% endif %}
+                                        </div>
+                                        <span class="text-error">{{ form.logo.errors }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <table id="example" class="table table-striped table-valign-middle" style="width:100%">
+                        <thead class="tmt_thead">
+                        <tr>
+                            <th class="tmt_th">Company Name</th>
+                            <th class="tmt_th">License Type</th>
+                            <th class="tmt_th">License End</th>
+                            <th class="tmt_th">Country</th>
+                            <th class="tmt_th">Logo</th>
+                        </tr>
+                        </thead>
+                        <tbody id="myTable">
+                        {% for company in usercompanies %}
+                            <tr>
+                                <td>{{company.name}}</td>
+                                <td>{{company.licensetype}}</td>
+                                <td>{{company.licenseenddate}}</td>
+                                <td>{{company.country}}</td>
+                                {% if company.logo and company.logo != '' %}
+                                    <td><img id="imglogo1" src="/apps/media/{{ company.logo }}" style="width: 30px; height: 30px;"></td>
+                                {% else %}
+                                    <td><img id="imglogo1" src=" " style="width: 30px; height: 30px;"></td>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div>
+                    <div id="divBackground" style="position: fixed; z-index: 999; height: 100%; width: 100%; top: 0; left:0; background-color: Black; filter: alpha(opacity=60); opacity: 0.6; -moz-opacity: 0.8;display:none">
+                    </div>
+                </div>
+                <div id="dialog" style="display: none">
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <script>
+            {#function PopupCenter(pageURL, title,w,h) {#}
+            {#    var left = (screen.width/2)-(w/2);#}
+            {#    var top = (screen.height/2)-(h/2);#}
+            {#    var targetWin = window.open (pageURL, title, 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width='+w+', height='+h+', top='+top+', left='+left);#}
+            {#    return targetWin;#}
+            {##}
+            {#function HideModalDiv()#}
+            {#{#}
+            {#    var bcgDiv = document.getElementById("divBackground");#}
+            {#    bcgDiv.style.display="none";#}
+            {##}
+            {#function OnClose()#}
+            {#{#}
+            {#    if(window.opener != null && !window.opener.closed)#}
+            {#    {#}
+                    {#window.opener.location.reload();#}
+            {#        window.opener.HideModalDiv();#}
+            {#    }#}
+            {##}
+            {#function refreshParent() {#}
+            {#    window.opener.location.reload();#}
+            {##}
+            {#window.onunload = refreshParent;#}
+        </script>
+{% endblock content %}
+
+{% block javascripts %}
+{% endblock javascripts %}

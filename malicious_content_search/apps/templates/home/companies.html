@@ -1,0 +1,812 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{#{% load media %}#}
+{% block title %} Company {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+{% endblock stylesheets %}
+
+{% block content %}
+
+    <div id="divcompanies" class="row">
+        <div class="col-12 mb-4">
+            <div class="card border-0 shadow components-section">
+                <div class="card-header">
+                    <div class="d-flex">
+                        <div class="me-auto">
+                            <h1 class="h6">Companies</h1>
+                        </div>
+                        {#                        <div id="message" class="row mb-4">#}
+                        {#                            {% if messages %}#}
+                        {#                                {% for message in messages %}#}
+                        {#                                    <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-left: 0px;margin-right: 0px">#}
+                        {#                                        {{ message }}#}
+                        {#                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>#}
+                        {#                                    </div>#}
+                        {#                                {% endfor %}#}
+                        {#                            {% endif %}#}
+                        {#                        </div>#}
+                        <div id="messagediv" class="row mb-4" style="display:none">
+                            <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-left: 0px;margin-right: 0px">
+                                <span id="message"></span>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        </div>
+                        <div class="ms-auto">
+                            <a href="#" id="addBtn">
+                                <i class="fa fa-plus" style="font-size: 18px; color: green" data-toggle="tooltip" title="Create Company"></i>
+                            </a>
+                            <a href="#" id="hideBtn" style="display:none">
+                                <i class="fa fa-minus" style="font-size: 18px; color: green" data-toggle="tooltip" title="Close"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div id="form" style="display:none">
+                    <div class="card-body">
+                        <div class="tmt_card components-section">
+                            <div class="card-body">
+                                <form id="company-form" method="post" action="" enctype="multipart/form-data" novalidate>
+                                    {% csrf_token %}
+                                    <div class="row mb-4">
+                                        <div class="col-lg-4 col-sm-6">
+                                            <div class="input-group">
+                                                <input type="hidden" id="id_id" name="id" value="">
+                                            </div>
+                                            <div class="form-group mb-4">
+                                                <label for="companyname">Company Name</label>
+                                                <div class="input-group">
+                                                    {{ form.name }}
+                                                </div>
+                                                <span class="text-error">{{ form.name.errors }}</span>
+                                            </div>
+                                            <div class="form-group mb-4">
+                                                <label for="licensetype">License Type</label>
+                                                <div class="input-group">
+                                                    {{ form.licensetype }}
+                                                </div>
+                                                <span class="text-error">{{ form.licensetype.errors }}</span>
+                                            </div>
+                                            <div class="form-group mb-4">
+                                                <label for="email">Company E-Mail</label>
+                                                <div class="input-group">
+                                                    {{ form.email }}
+                                                </div>
+                                                <span class="text-error">{{ form.email.errors }}</span>
+                                            </div>
+                                            <div class="form-group mb-4">
+                                                <label for="licensestartdate">License Start Date</label>
+                                                <div class="input-group">
+                                                    {{ form.licensestartdate }}
+                                                </div>
+                                                <span class="text-error">{{ form.licensestartdate.errors }}</span>
+                                            </div>
+                                            <div class="form-group mb-4">
+                                                <div class="input-group">
+                                                    {{ form.apikey }}
+                                                    <div class="input-group-append">
+                                                        <i id="genapikey" class="fas fa-key" style="font-size: 32px; color: #6C7AE0" data-toggle="tooltip" title="Generate Api Key" aria-label="apikey"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {#                        <div class="row mb-4">#}
+                                        <div class="col-lg-4 col-sm-6">
+                                            <div class="form-group mb-4">
+                                                <label for="linkedinname">LinkedIn Name</label>
+                                                <div class="input-group">
+                                                    {{ form.linkedinname }}
+                                                </div>
+                                                <span class="text-error">{{ form.linkedinname.errors }}</span>
+                                            </div>
+                                            <div class="form-group mb-4">
+                                                <label for="country">Country</label>
+                                                <div class="input-group" >
+                                                    {{ form.country }}
+                                                </div>
+                                                <span class="text-error">{{ form.country.errors }}</span>
+                                            </div>
+                                            <div class="form-group mb-4">
+                                                <label for="companysize">Company Size</label>
+                                                <div class="input-group">
+                                                    {{ form.companysize }}
+                                                </div>
+                                                <span class="text-error">{{ form.companysize.errors }}</span>
+                                            </div>
+                                            <div class="form-group mb-4">
+                                                <label for="licenseenddate">License End Date</label>
+                                                <div class="input-group">
+                                                    {{ form.licenseenddate }}
+                                                </div>
+                                                <span class="text-error">{{ form.licenseenddate.errors }}</span>
+                                            </div>
+                                        </div>
+                                        {#                        </div>#}
+                                        {#                        <div class="row mb-4">#}
+                                        <div class="col-lg-4 col-sm-6">
+                                            <div class="form-group mb-4">
+                                                <label for="shodanname">Shodan Name</label>
+                                                <div class="input-group">
+                                                    {{ form.shodanname }}
+                                                </div>
+                                                <span class="text-error">{{ form.shodanname.errors }}</span>
+                                            </div>
+                                            <div class="form-group mb-4">
+                                                <label for="activityarea">Activity Area</label>
+                                                <div class="input-group">
+                                                    {{ form.activityarea }}
+                                                </div>
+                                                <span class="text-error">{{ form.activityarea.errors }}</span>
+                                            </div>
+                                            <div class="form-group mb-4">
+                                                <label for="securitygrade">Security Grade</label>
+                                                <div class="input-group">
+                                                    {{ form.securitygrade }}
+                                                </div>
+                                                <span class="text-error">{{ form.securitygrade.errors }}</span>
+                                            </div>
+                                            <div class="form-group mb-4">
+                                                <label for="logo">Logo</label>
+                                                <div class="input-group">
+                                                    {{ form.logo }}
+                                                    {#                                            {% if form.logo and form.logo != '' %}#}
+                                                    <img id="id_logo1" src="/apps/media/{{ form.logo.value }}" style="width: 50px; height: 50px;">
+                                                    {#                                            {% else %}#}
+                                                    {#                                                <img id="img1" src=" " style="width: 50px; height: 50px;">#}
+                                                    {#                                            {% endif %}#}
+                                                </div>
+                                                <span class="text-error">{{ form.logo.errors }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="width:100%">
+                                        <div style="margin: 0 auto; text-align: center;">
+                                            <a href="#" id="cancel1" class="btn btn-secondary" style="margin-right: 30px">Cancel</a>
+                                            <a href="#" id="updatebtn" class="btn btn-behance" style="margin-right: 30px">Update</a>
+                                            <a href="#" id="createbtn" class="btn btn-behance" style="margin-right: 30px;">Create</a>
+                                            {#                                    {% if islem == 'update' %}#}
+                                            {#                                        <button type="submit" name="user" class="btn btn-primary" onclick="return confirm('Are you sure to update?')" style="background-color: #A64AC9">Update User</button>#}
+                                            {#                                    {% else %}#}
+                                            {#                                        <button type="submit" name="user" class="btn btn-primary" style="text-align:center;background-color: #A64AC9">Create User</button>#}
+                                            {#                                    {% endif %}#}
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card border-0 components-section">
+                    <div class="card-body">
+                        <div class="tmt_card components-section">
+                            <div class="card-body">
+                                <table id="example" class="table table-striped table-valign-middle" style="width:100%">
+                                    <thead class="tmt_thead">
+                                    <tr>
+                                        <th class="tmt_th">CRUD</th>
+                                        <th class="tmt_th">Company Name</th>
+                                        <th class="tmt_th">LinkedIn Name</th>
+                                        <th class="tmt_th">Shodan Name</th>
+                                        <th class="tmt_th">License Type</th>
+                                        <th class="tmt_th">License Start</th>
+                                        <th class="tmt_th">License End</th>
+                                        <th class="tmt_th">Country</th>
+                                        <th class="tmt_th">Activity Area</th>
+                                        <th class="tmt_th">Security Grade</th>
+                                        <th class="tmt_th">Company Size</th>
+                                        <th class="tmt_th">Logo</th>
+                                        <th class="tmt_th">E-Mail</th>
+                                        <th class="tmt_th">Created</th>
+                                        <th class="tmt_th">Modified</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="myTable">
+                                    {% for company in page_obj %}
+                                        <tr id="id_{{company.id}}">
+                                            <td id="crud_{{company.id}}">
+                                                {#                                    <a href="#" id="Button1" onclick="showModalPopUp('{% url 'home:company_update' id=company.id %}', 1100, 700)">#}
+                                                {#                                        <i class="fas fa-pen" style="font-size: 18px; color: #6C7AE0" data-toggle="tooltip" title="Update Company"></i>#}
+                                                {#                                    </a>#}
+                                                {#                                    <span class="dropdown">#}
+                                                {#                            <a href="#" class="btn btn btn-success btn-icon btn-icon-md" data-toggle="dropdown" aria-expanded="false">#}
+                                                {#                              <i class="fa fa-file"></i>#}
+                                                {#                            </a>#}
+                                                {#                            <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-120px, 20px, 0px);">#}
+                                                {#                                <a class="dropdown-item" href="#"><i class="la la-edit"></i> Edit Details</a>#}
+                                                {#                                <a class="dropdown-item" href="#"><i class="la la-leaf"></i> Update Status</a>#}
+                                                {#                                <a class="dropdown-item" href="#"><i class="la la-print"></i> Generate Report</a>#}
+                                                {#                            </div>#}
+                                                {#                        </span>#}
+
+                                                <a href="#" class="upd" id="Button{{ company.id }}" itemid="{{ company.id }}">
+                                                    <i class="fas fa-pen" data-toggle="tooltip" title="Update Company"></i>
+                                                </a>
+                                                <a href="{% url 'home:company_delete' id=company.id %}" onclick="return confirm('Are you sure to delete {{ company.name }}?')"/>
+                                                <i class="fas fa-trash-alt" style="font-size: 18px; color: #ce0f0f;" data-toggle="tooltip" title="Delete Company"></i>
+                                                </a>
+                                                <a href="#" id="Button2" onclick="showModalPopUp('{% url 'home:company_users' id=company.id %}', 825, 525)">
+                                                    <i class="ion ion-person-stalker" style="font-size: 18px; color: #6C7AE0" data-toggle="tooltip" title="Show Users"></i>
+                                                </a>
+                                            </td>
+                                            <td>{{company.name}}</td>
+                                            <td>{{company.linkedinname}}</td>
+                                            <td>{{company.shodanname}}</td>
+                                            <td>{{company.licensetype}}</td>
+                                            <td>{{company.licensestartdate}}</td>
+                                            <td>{{company.licenseenddate}}</td>
+                                            <td>{{company.country}}</td>
+                                            <td>{{company.activityarea}}</td>
+                                            <td>{{company.securitygrade}}</td>
+                                            <td>{{company.companysize}}</td>
+                                            {% if company.logo and company.logo != '' %}
+                                                <td><img id="logo_{{company.id}}" src="/apps/media/{{ company.logo }}" style="width: 30px; height: 30px;"></td>
+                                            {% else %}
+                                                <td><img id="logo_{{company.id}}" src=" " style="width: 30px; height: 30px;"></td>
+                                            {% endif %}
+                                            <td>{{company.email}}</td>
+                                            <td>{{company.created}}</td>
+                                            <td>{{company.modified}}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div id="divBackground" style="position: fixed; z-index: 999; height: 100%; width: 100%; top: 0; left:0; background-color: Black; filter: alpha(opacity=60); opacity: 0.6; -moz-opacity: 0.8;display:none">
+                    </div>
+                </div>
+                <div id="dialog" style="display: none">
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+{% block scripts %}
+    <script>
+        var table;
+        jQuery(function($) {
+            $("#updatebtn").click(function(e) {
+                e.stopImmediatePropagation()
+                e.preventDefault();
+                {#var data = $('form#company-form').serialize();#}
+                var data = new FormData($("#company-form")[0]);
+                var id = $("#id_id").val();
+                $.ajax({
+                    url: "{% url 'home:companies' %}",
+                    type: 'POST',
+                    processData: false,
+                    contentType: false,
+                    data: data,
+                    success: function(response) {
+                        var data = response['data']
+                        var crud = '<a href="#" class="upd" id="Button'+id+'" itemid="'+id+'">' +
+                            '<i class="fas fa-pen" data-toggle="tooltip" title="" data-bs-original-title="Update Company" aria-label="Update Company"></i>' +
+                            '</a>&nbsp;' +
+                            '<a href="/home/companies/delete/'+id+'/" onclick="return confirm(' + "'" + 'Are you sure to delete UC?' + "'" + ')">' +
+                            '<i class="fas fa-trash-alt del" data-toggle="tooltip" title="" data-bs-original-title="Delete Company" aria-label="Delete Company"></i>' +
+                            '</a>&nbsp;' +
+                            '<a href="#" id="Button2" onclick="showModalPopUp(' + "'" + '/home/companies/users/'+id+'/' + "'" + ', 825, 525)">' +
+                            '<i class="ion ion-person-stalker" style="font-size: 18px; color: #6C7AE0" data-toggle="tooltip" title="" data-bs-original-title="Show Users" aria-label="Show Users"></i>' +
+                            '</a>';
+                        {#var logo = '<img id="imglogo1" src="/apps/media/logo" style="width: 30px; height: 30px;">';#}
+                        var objKeys = ["crud", "name", "linkedinname", "shodanname", "licensetype",
+                            "licensestartdate", "licenseenddate", "country",
+                            "activityarea", "securitygrade", "companysize",
+                            "logo", "email", "created", "modified"];
+                        var arr = get_visible_columns()
+                        var aa = arr.concat(objKeys)
+                        var bb = aa.filter((item,pos) => aa.indexOf(item) === pos)
+                        {#alert(bb)#}
+                        $('#id_' + id + ' td').each(function(i) {
+                            if (bb[i] == 'crud') {
+                                $('#crud_' + id).html(crud)
+                            } else if (bb[i] == 'logo') {
+                                if (data[bb[i]] === 'None')
+                                    $('#logo_' + id).attr("src",'_');
+                                else
+                                    $('#logo_' + id).attr("src",'/apps/media/'+data[bb[i]]);
+                            } else {
+                                $(this).text(data[objKeys[i]]);
+                            }
+                        });
+                        var message = response['message']
+                        {#alert(message)#}
+                        $("#message").text(message);
+                        $("#messagediv").show();
+                        $("#company-form").trigger('reset');
+                        $("#form").hide();
+                        $("#addBtn").show();
+                        $("#hideBtn").hide();
+                        {#$("#updatebtn").hide();#}
+                        {#$("#company-form").trigger('reset');#}
+                        {#$("#id_name").focus();#}
+                    },
+                    error: function (response) {
+                        var data = response.responseJSON['data'];
+                        const obj = JSON.parse(data);
+                        var result = [];
+                        for(var i in obj)
+                            result.push([i, obj[i][0]['message']]);
+                        var $input = $("input[name='name']");
+                        if ($("#company-form").next('span').length) $("input").nextAll('span').empty();
+                        for (var i in result) {
+                            var key = result[i][0];
+                            var val = result[i][1];
+                            let $input = $("#id_" + key);
+                            var span1 = $input.parent().parent().find(".text-error");
+                            span1.css("color", "red");
+                            span1.text(val);
+                        }
+                    }
+                });
+            });
+            $("#createbtn").click(function(e) {
+                e.stopImmediatePropagation();
+                e.preventDefault();
+                {#var data = $('form#company-form').serialize();#}
+                var data = new FormData($("#company-form")[0]);
+                {#var id = $("#id_id").val();#}
+                $.ajax({
+                    url: "{% url 'home:companies' %}",
+                    type: 'POST',
+                    processData: false,
+                    contentType: false,
+                    data: data,
+                    success: function(response) {
+                        {#alert('create success');#}
+                        var data = response['data'];
+                        var id = data['id'];
+                        var crud = '<a href="#" class="upd" id="Button'+id+'" itemid="'+id+'">' +
+                            '<i class="fas fa-pen" data-toggle="tooltip" title="" data-bs-original-title="Update Company" aria-label="Update Company"></i>' +
+                            '</a>&nbsp;' +
+                            '<a href="/home/companies/delete/'+id+'/" onclick="return confirm(' + "'" + 'Are you sure to delete UC?' + "'" + ')">' +
+                            '<i class="fas fa-trash-alt del"  data-toggle="tooltip" title="" data-bs-original-title="Delete Company" aria-label="Delete Company"></i>' +
+                            '</a>&nbsp;' +
+                            '<a href="#" id="Button2" onclick="showModalPopUp(' + "'" + '/home/companies/users/'+id+'/' + "'" + ', 825, 525)">' +
+                            '<i class="ion ion-person-stalker" style="font-size: 18px; color: #s" data-toggle="tooltip" title="" data-bs-original-title="Show Users" aria-label="Show Users"></i>' +
+                            '</a>';
+                        var logo = '<img id="logo_'+id+'" src="/apps/media/'+data['logo']+'" style="width: 30px; height: 30px;">'
+                        var objKeys = ["crud", "name", "linkedinname", "shodanname", "licensetype",
+                            "licensestartdate", "licenseenddate", "country",
+                            "activityarea", "securitygrade", "companysize",
+                            "logo", "email", "created", "modified"];
+                        var arr = get_visible_columns();
+                        var aa = arr.concat(objKeys);
+                        var bb = aa.filter((item,pos) => aa.indexOf(item) === pos);
+                        var row = $('<tr id="id_'+id+'" class="odd">');
+                        table.row.add([
+                            crud,
+                            data['name'] ,
+                            data['linkedinname'] ,
+                            data['shodanname'] ,
+                            data['licensetype'] ,
+                            data['licensestartdate'] ,
+                            data['licenseenddate'] ,
+                            data['country'] ,
+                            data['activityarea'] ,
+                            data['securitygrade'] ,
+                            data['companysize'] ,
+                            logo ,
+                            data['email'] ,
+                            data['created'] ,
+                            data['modified'] ]).draw()
+                        {#for (let i = 0; i < bb.length; i++) {#}
+                        {#    if (bb[i] == 'crud') {#}
+                        {#$('#crud_' + id).html(crud)#}
+                        {#        row.append('<td id="crud_'+id+'" class="noVis sorting_1">' + crud + '</td>');#}
+                        {#    } else if (bb[i] == 'logo') {#}
+                        {#        if (data[bb[i]] === 'None')#}
+                        {#            row.append('<td>'+ logo +'</td>')#}
+                        {#row.append('<td><img id="logo_'+id+'" src="_" style="width: 30px; height: 30px;"></td>');#}
+                        {#        else#}
+                        {#$('#logo_' + id).attr("src", '/apps/media/' + data[i]);#}
+                        {#            row.append('<td>'+ logo.replace('None', 'data[bb[i]]') +'</td>')#}
+                        {#row.append('<td><img id="logo_'+id+'" src="/apps/media/'+data[bb[i]]+'" style="width: 30px; height: 30px;"></td>');#}
+                        {#    } else if (bb[i] == 'name') {#}
+                        {#        row.append('<td class=" noVis">'+data[bb[i]]+'</td>');#}
+                        {#    } else {#}
+                        {#        if (data[bb[i]] != '')#}
+                        {#            row.append('<td>'+data[bb[i]]+'</td>');#}
+                        {#        else#}
+                        {#            row.append('<td>-</td>');#}
+                        {#    }#}
+                        {##}
+                        {#row.append('</tr>')#}
+                        {##}
+                        {#table.row.add(row).draw();#}
+                        {#$('#example tbody').prepend(row);#}
+                        {#table.row.add( {#}
+                        {#    "name":       "Tiger Nixon",#}
+                        {#    "position":   "System Architect",#}
+                        {#    "salary":     "$3,120",#}
+                        {#    "start_date": "2011/04/25",#}
+                        {#    "office":     "Edinburgh",#}
+                        {#    "extn":       "5421"#}
+                        {# ).draw();#}
+                        {#table.columns.adjust().draw();#}
+                        {#var row_str = '<tr id="id_'+id+'" class="odd">'#}
+                        {#for (let i = 0; i < bb.length; i++) {#}
+                        {#    if (bb[i] == 'crud') {#}
+                        {#        row_str += '<td id="crud_'+id+'" class="noVis sorting_1">' + crud + '</td>'#}
+                        {#    } else if (bb[i] == 'logo') {#}
+                        {#        row_str += '<td><img id="logo_'+id+'" src="/apps/media/'+data[bb[i]]+'" style="width: 30px; height: 30px;"></td>'#}
+                        {#if (data[bb[i]] === 'None')#}
+                        {#    $('#logo_' + id).attr("src", '_');#}
+                        {#else#}
+                        {#    $('#logo_' + id).attr("src", '/apps/media/' + data[bb[i]]);#}
+                        {#    } else {#}
+                        {#        row_str += '<td>' + data[objKeys[i]] + '</td>';#}
+                        {#    }#}
+                        {##}
+                        {#alert(row)#}
+                        var message = response['message']
+                        {#alert(message)#}
+                        $("#message").text(message);
+                        $("#messagediv").show();
+                        $("#company-form").trigger('reset');
+                        $("#form").hide();
+                        $("#addBtn").show();
+                        $("#hideBtn").hide();
+                    },
+                    error: function(response){
+                        {#alert('create error');#}
+                        var data = response.responseJSON['data'];
+                        const obj = JSON.parse(data);
+                        var result = [];
+                        for(var i in obj)
+                            result.push([i, obj[i][0]['message']]);
+                        var $input = $("input[name='name']");
+                        if ($("#company-form").next('span').length) $("input").nextAll('span').empty();
+                        for (var i in result) {
+                            var key = result[i][0];
+                            var val = result[i][1];
+                            let $input = $("#id_" + key);
+                            var span1 = $input.parent().parent().find(".text-error");
+                            span1.css("color", "red");
+                            span1.text(val);
+                        }
+                    }
+                });
+            });
+            $(document).on('click', '.upd', function(e) {
+                e.stopImmediatePropagation();
+                e.preventDefault();
+                var id = $(this).attr('itemid');
+                url = "{% url 'home:companies' %}";
+                $.ajax({
+                    type: 'GET',
+                    url: url,
+                    data: {"id": id, "csrfmiddlewaretoken": '{{ csrf_token }}'},
+                    success: function (response) {
+                        $("#addBtn").hide();
+                        $("#form").show();
+                        $("#hideBtn").show();
+                        $("#createbtn").hide();
+                        $("#updatebtn").show();
+                        $("#company-form").trigger('reset');
+                        $("#id_name").focus();
+                        var form = JSON.parse(response["instance"]);
+                        var fields = form[0]["fields"];
+                        var pk = form[0]["pk"];
+                        $('#id_name').val(fields["name"]);
+                        $('#id_id').val(pk);
+                        $("#id_linkedinname").val(fields["linkedinname"]);
+                        $("#id_licensetype").val(fields["licensetype"]);
+                        $("#id_licensestartdate").val(fields["licensestartdate"]);
+                        $("#id_licenseenddate").val(fields["licenseenddate"]);
+                        $("#id_country").val(fields["country"]);
+                        $("#id_activityarea").val(fields["activityarea"]);
+                        $("#id_companysize").val(fields["companysize"]);
+                        {#$("#id_logo").val(fields["logo"]);#}
+                        $("#id_logo").attr("src", fields["logo"]);
+                        $("#id_logo1").attr("src",'/apps/media/'+fields["logo"]);
+                        $("#id_email").val(fields["email"]);
+                        {#$("#basediv").html(fields)#}
+                        // if not valid user, alert the user
+                        {#if(!response["valid"]){#}
+                        {#    alert("You cannot create a friend with same nick name");#}
+                        {#    var nickName = $("#id_nick_name");#}
+                        {#    nickName.val("")#}
+                        {#    nickName.focus()#}
+                        {##}
+                    },
+                    error: function (response) {
+                        console.log(response)
+                        alert("error")
+                    }
+                });
+            });
+            {#$(".upd").click(function(e) {#}
+            {#    #}
+            {#);#}
+            $("#company-form1").submit(function (e) {
+                // preventing from page reload and default actions
+                e.preventDefault();
+                // serialize the data for sending the form data.
+                var serializedData = $(this).serialize();
+                // make POST ajax call
+                $.ajax({
+                    type: 'POST',
+                    {#url: "{% url 'post_friend' %}",#}
+                    data: serializedData,
+                    success: function (response) {
+                        // on successfull creating object
+                        // 1. clear the form.
+                        $("#friend-form").trigger('reset');
+                        // 2. focus to nickname input
+                        $("#id_nick_name").focus();
+
+                        // display the newly friend to table.
+                        var instance = JSON.parse(response["instance"]);
+                        var fields = instance[0]["fields"];
+                        $("#my_friends tbody").prepend(
+                            `<tr>
+                    <td>${fields["nick_name"]||""}</td>
+                    <td>${fields["first_name"]||""}</td>
+                    <td>${fields["last_name"]||""}</td>
+                    <td>${fields["likes"]||""}</td>
+                    <td>${fields["dob"]||""}</td>
+                    <td>${fields["lives_in"]||""}</td>
+                    </tr>`
+                        )
+                    },
+                    error: function (response) {
+                        // alert the error if any error occured
+                        alert(response["responseJSON"]["error"]);
+                    }
+                })
+            })
+            $("#dialog").dialog({
+                autoOpen: false,
+                modal: true,
+                title: "Details",
+                buttons: {
+                    Close: function () {
+                        $(this).dialog('close');
+                    }
+                }
+            });
+            $("#Button2").click(function (e) {
+                e.preventDefault();
+                var href = $(this).attr('title');
+                $.ajax({
+                    type: "POST",
+                    url: href,
+                    data: "",
+                    {#data: "{name: '" + $("#txtName").val() + "'}",#}
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (r) {
+                        $("#dialog").html(r.d);
+                        $("#dialog").dialog("open");
+                    }
+                });
+            });
+            {% if form_error %}
+                $("#form").show();
+                $("#hideBtn").show();
+                $("#addBtn").hide();
+            {% endif %}
+            $('#id_logo').on('change', function() {
+                var pathwithfilename = $('#id_logo').val();
+                var filename = pathwithfilename.substring(12);
+                {#$('.uploadedfile').html("Uploaded File Name :" + filename).css({#}
+                {#    'display':'block'#}
+                {#);#}
+                $("#id_logo1").attr("src",'/apps/media/'+filename);
+            });
+            var licensetypeTags = {{ licensetypeTags|safe }}
+            var companysizeTags = {{ companysizeTags|safe }}
+            var countryTags = {{ countries|safe }};
+            var activityareaTags = {{ activityareaTags|safe }}
+            var securitygradeTags = {{ securitygradeTags|safe }}
+                $( "#id_country" ).autocomplete({
+                    source: countryTags,
+                    minLength:0
+                }).bind('focus', function(){ $(this).autocomplete("search"); } );
+            $( "#id_licensetype" ).autocomplete({
+                source: licensetypeTags,
+                scroll: true,
+                minLength:0
+            }).bind('focus', function(){ $(this).autocomplete("search"); } );
+            $( "#id_companysize" ).autocomplete({
+                source: companysizeTags,
+                minLength:0
+            }).bind('focus', function(){ $(this).autocomplete("search"); } );
+            $( "#id_activityarea" ).autocomplete({
+                source: activityareaTags,
+                minLength:0
+            }).bind('focus', function(){ $(this).autocomplete("search"); } );
+            $( "#id_securitygrade" ).autocomplete({
+                source: securitygradeTags,
+                minLength:0
+            }).bind('focus', function(){ $(this).autocomplete("search"); } );
+
+            $('a.toggle-vis').on( 'click', function (e) {
+                e.preventDefault();
+
+                // Get the column API object
+                var column = table.column( $(this).attr('data-column') );
+                // Toggle the visibility
+                column.visible( !column.visible() );
+            } );
+            $("#addBtn").click(function(e) {
+                e.preventDefault();
+                $("#form").show();
+                $("#hideBtn").show();
+                $("#createbtn").show();
+                $("#updatebtn").hide();
+                $(this).hide();
+            });
+            $("#hideBtn").click(function(e) {
+                e.preventDefault();
+                $("#form span").text("");
+                $("#form").hide();
+                $("#company-form").trigger('reset');
+                $("#addBtn").show();
+                $("#createbtn").hide();
+                $("#updatebtn").show();
+                {#$('span').text('');#}
+                $(this).hide();
+            });
+            $("#cancel1").click(function(e) {
+                e.preventDefault();
+                $("#form").hide();
+                $("#company-form").trigger('reset');
+                $("#addBtn").show();
+                $("#hideBtn").hide();
+                $('span').text('');
+            });
+            {#$('#tabellaArticoli3').DataTable({#}
+            {#    responsive: true,#}
+            {#    paging: true,#}
+            {#    "pageLength": 100,#}
+            {#    "lengthMenu": [ [20, 50, 100, -1], [20, 50, 100, "Tutti"] ],#}
+            {#    "info": false,#}
+            {#    scrollCollapse: false,#}
+            {#    scrollX: false,#}
+            {#    scrollY: false,#}
+            {#    "columnDefs": [#}
+            {#        { "orderable": false, "targets": 1 },#}
+            {#        { "width": "5%", "orderable": false, "targets": 'azioni' }#}
+            {#    ]#}
+            {#);#}
+            table = $('#example').DataTable( {
+                responsive: true,
+                lengthMenu: [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
+                stateSave: true,
+                stateDuration: -1,
+                scrollX: true,
+                {#paging: true,#}
+                {#searching: false,#}
+                {#"scrollY": "200px",#}
+                {#"paging": false,#}
+                dom: 'Blfrtip',
+                columns: [
+                    { name: 'crud' },
+                    { name: 'name' },
+                    { name: 'linkedinname', defaultContent: '' },
+                    { name: 'shodanname', defaultContent: '' },
+                    { name: 'licensetype' },
+                    { name: 'licensestartdate' },
+                    { name: 'licenseenddate' },
+                    { name: 'country', defaultContent: '' },
+                    { name: 'activityarea' },
+                    { name: 'securitygrade' },
+                    { name: 'companysize' },
+                    { name: 'logo', defaultContent: '<img id="logo_id" src="/apps/media/None" style="width: 30px; height: 30px;">', },
+                    { name: 'email', defaultContent: '' },
+                    { name: 'created', defaultContent: '' },
+                    { name: 'modified', defaultContent: '' },
+                ],
+                columnDefs: [
+                    {
+                        targets: 0,
+                        className: 'noVis'
+                    },
+                    {
+                        targets: 1,
+                        className: 'noVis'
+                    },
+                    { visible: false, targets: [ 2,3,4 ] },
+                    {#{ defaultContent: "-", targets: "_all" },#}
+                ],
+                buttons: [
+                    {
+                        extend: 'colvis',
+                        columns: ':not(.noVis)'
+                    }
+                ],
+            } );
+            $('[data-toggle="tooltip"]').tooltip();
+
+            $("#divBackground").on('hide', function () {
+                window.location.reload();
+            });
+
+            $('#sayi').on('change', function () {
+                var url = $(this).val(); // get selected value
+                if (url) { // require a URL
+                    window.location = url; // redirect
+                }
+                return false;
+            });
+        });
+        var popUpObj;
+        function get_visible_columns() {
+            //console.log(table);
+            var all_columns = table.settings().init().columns;
+            {#console.log('all_columns', all_columns);#}
+            var visible_columns = [];
+            for (var i in all_columns) {
+                if (table.column(all_columns[i].name + ':name').visible()) {
+                    visible_columns.push(all_columns[i].name);
+                }
+            }
+            {#alert(visible_columns)#}
+            return visible_columns
+            {#return visible_columns.join(', ');#}
+        }
+        function updBtn(id) {
+            var table = $('#example').DataTable();
+            var row = $('#tr' + id)
+            var data = table.rows().data();
+            var dataarray = table.rows().data().toArray()
+            console.log(table.row(id).data());
+        }
+        function showDialog(url){
+            $.ajax({
+                type: "POST",
+                url: url,
+                headers: {//<==
+                    "X-CSRFTOKEN": "{{ csrf_token }}"//<==
+                },
+                data: '{ "csrfmiddlewaretoken": "{{csrf_token}}"}',
+                {#data: "{name: '" + $("#txtName").val() + "'}",#}
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (r) {
+                    $("#dialog").html(r.d);
+                    $("#dialog").dialog("open");
+                }
+            });
+        }
+        function showModalPopUp(url, w, h)
+        {
+            popUpObj=window.open(url,
+                "ModalPopUp",
+                "toolbar=no," +
+                "scrollbars=no," +
+                "location=no," +
+                "statusbar=no," +
+                "menubar=no," +
+                "resizable=0," +
+                "width="+w+"," +
+                "height="+h+"," +
+                "left = 150," +
+                "top=30"
+            );
+            popUpObj.focus();
+            LoadModalDiv();
+        }
+        function popupWindow(url, windowName, win, w, h) {
+            const y = win.top.outerHeight / 2 + win.top.screenY - ( h / 2);
+            const x = win.top.outerWidth / 2 + win.top.screenX - ( w / 2);
+            var targetWin = win.open(url, windowName, `toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=${w}, height=${h}, top=${y}, left=${x}`);
+            return targetWin;
+        }
+        function LoadModalDiv()
+        {
+            var bcgDiv = document.getElementById("divBackground");
+            bcgDiv.style.display="block";
+        }
+        function HideModalDiv() {
+            var bcgDiv = document.getElementById("divBackground");
+            bcgDiv.style.display = "none";
+        }
+    </script>
+{% endblock scripts %}

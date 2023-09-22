@@ -1,0 +1,12 @@
+<nav>
+    <ul>
+        <li><a href="deneme">deneme</a></li>
+        {% for nav_link in nav_links %}
+            {% if nav_link.has_item %}
+                <li><a href="{{nav_link.address}}">{{nav_link.title}}</a></li>
+            {% else %}
+                <li><a href="{{nav_link.address}}">{{nav_link.title}}</a></li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+</nav>

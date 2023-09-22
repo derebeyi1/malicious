@@ -1,0 +1,168 @@
+{% extends "layouts/base-fullscreen.html" %}
+{#{% extends "layouts/base.html" %}#}
+{% load static %}
+{% block title %} User {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+{% endblock stylesheets %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-12 mb-4">
+            <div class="card border-0 shadow components-section">
+                <div class="card-header">
+                    <div class="d-flex">
+                        <div class="me-auto">
+                            {% if islem == 'update' %}
+                                <h1 class="h6">Update User</h1>
+                            {%  else %}
+                                <h1 class="h6">Create User</h1>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-sm-center">
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-left: 0px;margin-right: 0px">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
+                        {#                            {{ form.as_p }}#}
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group mb-4">
+                                    <label for="username">User Name</label>
+                                    <div class="input-group">
+                                        {{ form.username }}
+                                    </div>
+                                    <span class="text-error">{{ form.username.errors }}</span>
+                                </div>
+                                <div class="form-group mb-4">
+                                    <label for="email">E-Mail</label>
+                                    <div class="input-group">
+                                        {{ form.email }}
+                                    </div>
+                                    <span class="text-error">{{ form.email.errors }}</span>
+                                </div>
+                                <div class="form-group mb-4">
+                                    <label for="first_name">First Name</label>
+                                    <div class="input-group">
+                                        {{ form.first_name }}
+                                    </div>
+                                    <span class="text-error">{{ form.first_name.errors }}</span>
+                                </div>
+                                <div class="form-group mb-4">
+                                    <label for="last_name">Last Name</label>
+                                    <div class="input-group">
+                                        {{ form.last_name }}
+                                    </div>
+                                    <span class="text-error">{{ form.last_name.errors }}</span>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <div class="form-group mb-4">
+                                            <label for="is_superuser">Is Super User</label>
+                                            <div class="input-group">
+                                                {{ form.is_superuser }}
+                                            </div>
+                                            <span class="text-error">{{ form.is_superuser.errors }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="form-group mb-4">
+                                            <label for="is_active">Is Active</label>
+                                            <div class="input-group">
+                                                {{ form.is_active }}
+                                            </div>
+                                            <span class="text-error">{{ form.is_active.errors }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="form-group mb-4">
+                                            <label for="group">Role</label>
+                                            <div class="input-group">
+                                                {{ form.group }}
+                                            </div>
+                                            <span class="text-error">{{ form.group.errors }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group mb-4" style="overflow-y: scroll; height:400px;">
+                                    <label for="companies">Companies</label>
+                                    <div class="input-group">
+                                        {{ form.companies }}
+                                    </div>
+                                    <span class="text-error">{{ form.companies.errors }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="width:100%">
+                            <div style="margin: 0 auto; text-align: center;">
+                                {% if islem == 'update' %}
+                                    <button type="submit" name="user" class="btn btn-primary" onclick="return confirm('Are you sure to update?')" style="background-color: #A64AC9">Update User</button>
+                                {% else %}
+                                    <button type="submit" name="user" class="btn btn-primary" style="text-align:center;background-color: #A64AC9">Create User</button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% block scripts %}
+        {#        {{ block.super }}#}
+        <script>
+            jQuery(function($) {
+                $("#divBackground").on('hidden.bs.modal', function () {
+                    location.reload();
+                });
+                {#$("#cart").on('hide', function () {#}
+                {#    window.location.reload();#}
+                {#);#}
+            });
+            function PopupCenter(pageURL, title,w,h) {
+                var left = (screen.width/2)-(w/2);
+                var top = (screen.height/2)-(h/2);
+                var targetWin = window.open (pageURL, title, 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width='+w+', height='+h+', top='+top+', left='+left);
+                return targetWin;
+            }
+            function HideModalDiv()
+            {
+                var bcgDiv = document.getElementById("divBackground");
+                bcgDiv.style.display="none";
+            }
+            function sleep(miliseconds) {
+                var currentTime = new Date().getTime();
+                while (currentTime + miliseconds >= new Date().getTime()) {
+                }
+            }
+            function OnClose()
+            {
+                if(window.opener != null && !window.opener.closed)
+                {
+                    {#window.opener.location.reload();#}
+                    window.opener.HideModalDiv();
+                }
+            }
+            function refreshParent() {
+                window.opener.location.reload();
+            }
+            window.onunload = refreshParent;
+        </script>
+    {% endblock %}
+{% endblock content %}
+
+{% block javascripts %}
+{% endblock javascripts %}

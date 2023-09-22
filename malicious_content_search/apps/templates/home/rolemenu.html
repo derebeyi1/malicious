@@ -1,0 +1,248 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% load temptags %}
+{% block title %} Role-Menu {% endblock %}
+
+{% block stylesheets %}
+{% endblock stylesheets %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-12 mb-4">
+            <div class="card border-0 shadow components-section">
+                <div class="card-header">
+                    <div class="d-flex">
+                        <div class="me-auto">
+                            {% if islem == 'update' %}
+                                <h1 class="h6">Update Role-Menu</h1>
+                            {%  else %}
+                                <h1 class="h6">Create Role-Menu</h1>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div id="messagediv" class="d-flex justify-content-sm-center">
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-left: 0px;margin-right: 0px">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="form" style="margin:auto; width:600px;">
+                        <form id="rolemenu" method="post" action="" enctype="multipart/form-data" novalidate>
+                            {% csrf_token %}
+                            {#                                                    {{ form.as_p }}#}
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group mb-4">
+                                        <label for="group">Role</label>
+                                        <div class="input-group">
+                                            {{ form.group_id }}
+                                        </div>
+                                        <span class="text-error">{{ form.group.errors }}</span>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="list-group list-group-flush" style="overflow-y: scroll; height:500px;">
+                                        <div class="form-group mb-4">
+                                            <label for="menus">Menu</label>
+                                            <div class="input-group">
+                                                {#                                                {% getGroupMenusForAuth 3 %}#}
+                                                <table id="example" class="table table-valign-middle no-footer simple-tree-table dataTable" aria-describedby="example_info" style="">
+                                                    <thead style="background-color: #6C7AE0">
+                                                    <tr><th class="sorting_disabled" rowspan="1" colspan="1" aria-label="Select" style="width: 57px;"><span class="p-column-title">Select</span></th>
+                                                        <th class="sorting_disabled" rowspan="1" colspan="1" aria-label="Title" style="width: 162px;"><span class="p-column-title">Title</span></th></tr></thead>
+                                                    <tbody>
+                                                    {% for menu in menus|in_category:1%}
+                                                        <tr data-node-id="{{ menu.id }}" style="background-color: #ECEAF4" class="simple-tree-table-root simple-tree-table-opened odd">
+                                                            <td><span class="simple-tree-table-handler simple-tree-table-icon" style="margin-left: 0px;"></span>
+                                                                {% if menu.id in usermenuarr %}
+                                                                    <input type="checkbox" name="menus{{ menu.id }}" value="{{ menu.id }}" id="id_menus_{{ menu.id }}" checked>
+                                                                {% else %}
+                                                                    <input type="checkbox" name="menus{{ menu.id }}" value="{{ menu.id }}" id="id_menus_{{ menu.id }}">
+                                                                {% endif %}
+                                                            </td>
+                                                            <td><a href="#">{{ menu.title }}</a></td>
+                                                        </tr>
+                                                        {% for smenu in menus|in_category:menu.id %}
+                                                            <tr data-node-id="{{ smenu.id }}" data-node-pid="{{ menu.id }}" style="background-color: #FFFFFF" class="simple-tree-table-empty even">
+                                                                <td><span class="simple-tree-table-handler simple-tree-table-icon" style="margin-left: 20px;"></span>
+                                                                    {% if smenu.id in usermenuarr %}
+                                                                        <input type="checkbox" name="menus{{ smenu.id }}" value="{{ smenu.id }}" id="id_menus_{{ smenu.id }}" parentid="{{ menu.id }}" checked></td>
+                                                                    {% else %}
+                                                                        <input type="checkbox" name="menus{{ smenu.id }}" value="{{ smenu.id }}" id="id_menus_{{ smenu.id }}" parentid="{{ menu.id }}"></td>
+                                                                    {% endif %}
+                                                                <td>&nbsp;&nbsp;&nbsp;&nbsp;{{ smenu.title }}</td>
+                                                            </tr>
+                                                        {% endfor %}
+                                                    {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <span class="text-error">{{ form.menus.errors }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <div class="form-group mb-4">
+                                        <div class="input-group">
+                                            <input type="hidden" name="userid" class="form-control" id="id_userid" value="0">
+                                        </div>
+                                        <span class="text-error">{{ form.group.errors }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="width:100%">
+                                <div style="margin: 0 auto; text-align: center;">
+                                    {% if islem == 'update' %}
+                                        <button type="submit" name="menu" class="btn btn-primary" onclick="return confirm('Are you sure to update?')" style="background-color: #A64AC9">Update Authorizations</button>
+                                    {% else %}
+                                        <button type="submit" name="menu" class="btn btn-primary" style="text-align:center;background-color: #A64AC9">Save Authorizations</button>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% block scripts %}
+        <script>
+            jQuery(function($) {
+                var my_condition = true;
+                $('#id_group_id').change( function(e) {
+                    e.stopImmediatePropagation()
+                    if (my_condition) {
+                        var id = $("#id_group_id option:selected").val();
+                        var url = "{% url 'home:role_menu' %}";
+                        $.ajax({
+                            type: 'GET',
+                            url: url,
+                            data: {"group_id": id},
+                            success: function (response) {
+                                $("#example").find(":checkbox").each(function(){
+                                    $(this).prop("checked",false)
+                                });
+                                for (let i = 0; i < response['usermenuarr'].length; i++) {
+                                    $("#id_menus_"+ response['usermenuarr'][i]).prop("checked",true)
+                                }
+                                my_condition = false;
+                                $('#id_group_id').val(response['group_id']).change();
+                                return false;
+                            },
+                            error: function (response) {
+                                alert('error')
+                                console.log(response)
+                            }
+                        });
+                    } else {
+                        my_condition = true;
+                    }
+                });
+                $("#rolemenu").submit(function (e) {
+                    e.stopImmediatePropagation()
+                    e.preventDefault();
+                    var str = "";
+                    var str1 = "";
+                    $(":checkbox").each(function(){
+                        str1 = $(this).val() + ",";
+                        str += $(this).prop('checked')==true ? str1 : "";
+                    });
+                    var role = $('#id_group_id option:selected').val();
+                    var ids = str.substring(0, str.length - 1);
+                    var url = "{% url 'home:role_menu' %}";
+                    $.ajax({
+                        type: 'POST',
+                        url: url,
+                        data: {"group_id": role, "usermenu": ids, "csrfmiddlewaretoken": '{{ csrf_token }}'},
+                        success: function (response) {
+                            var resp = response;
+                            var message = '<div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-left: 0px;margin-right: 0px">' +
+                                'The menu authorization is done successfully.' +
+                                '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
+                            $("#messagediv").append(message);
+                        },
+                        error: function (response) {
+                            alert('error');
+                        }
+                    })
+                });
+                $(":checkbox").change(function() {
+                    pid = $(this).attr("parentid")
+                    if($(this).is(":checked")) {
+                        if (pid === undefined) {
+                            cval = $(this).val();
+                            $("[parentid="+cval+"]").prop("checked",true)
+                        } else {
+                            var str = '';
+                            $("[parentid="+pid+"]").each(function(){
+                                str += this.checked ? "1" : "0";
+                            });
+                            if (str.indexOf("0") >= 0 && str.indexOf("1") == -1) {
+                                $(":checkbox[value="+pid+"]").prop("checked", false);
+                            };
+                            if (str.indexOf("1") >= 0) {
+                                $(":checkbox[value="+pid+"]").prop("checked", true);
+                            };
+                        }
+                    } else {
+                        if (pid === undefined) {
+                            cval = $(this).val();
+                            $("[parentid="+cval+"]").prop("checked",false)
+                        } else {
+                            var str = '';
+                            $("[parentid="+pid+"]").each(function(){
+                                str += this.checked ? "1" : "0";
+                            });
+                            if (str.indexOf("0") == 0 && str.indexOf("1") == -1) {
+                                $(":checkbox[value="+pid+"]").prop("checked", false);
+                            };
+                            if (str.indexOf("1") == 0 && str.indexOf("0") == -1) {
+                                $(":checkbox[value="+pid+"]").prop("checked", true);
+                                $(":checkbox[value="+pid+"]").css('background-color', 'red');
+                            };
+                        }
+                    }
+                })
+                $('a.toggle-vis').on( 'click', function (e) {
+                    e.preventDefault();
+                    var column = table.column( $(this).attr('data-column') );
+                    column.visible( !column.visible() );
+                } );
+                $('#example').simpleTreeTable({
+                    expander: $('#expander'),
+                    collapser: $('#collapser'),
+                    store: 'session',
+                    storeKey: 'simple-tree-table-basic'
+                });
+                var table = $('#example').DataTable( {
+                    lengthMenu: [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
+                    stateSave: false,
+                    stateDuration: -1,
+                    paging: false,
+                    order: [],
+                    aaSorting: [],
+                    bDestroy: true,
+                    dom: 'Blrtip',
+                    columnDefs: [
+                        {
+                            targets: [0, 1], /* table column index */
+                            orderable: false, /* true or false */
+                        }
+                    ],
+                } );
+            });
+        </script>
+    {% endblock %}
+{% endblock content %}
+
+{% block javascripts %}
+{% endblock javascripts %}

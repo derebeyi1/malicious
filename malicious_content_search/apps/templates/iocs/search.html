@@ -1,0 +1,482 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block title %} Dashboard {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+{% endblock stylesheets %}
+
+{% block content %}
+    <form>
+        <div id="parent" class="content-wrapper" style="min-height: 553px;">
+            <!-- Content Header (Page header) -->
+            <div class="d-flex flex-row bd-highlight p-1 mb-2" style="padding-top: 0px">
+                <h1 class="h5">IOCs Searching</h1>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="card">
+                        <div class="card-header p-2">
+                            {#                            <h4 class="card-title"></h4>#}
+                            <form method="POST">
+                                {#                                <div class="row">#}
+                                {#                                    <div class="col col-md-8 offset-md-2">#}
+                                {#                                        <div class="input-group input-group-md">#}
+                                {#                                            <input type="text" id="apikey" class="form-control form-control-md" placeholder="Api Key" required value="{{ apikey }}">#}
+                                {#                                        </div>#}
+                                {#                                    </div>#}
+                                {#                                </div>#}
+                                <div class="col col-md-8 offset-md-2">
+                                    <div class="input-group input-group-md">
+                                        <input type="search" id="query1" class="form-control form-control-md" placeholder="Hash/IPs/URLs/Domains">
+                                        <div class="input-group-append">
+                                            <button id="btnSubmit" class="btn btn-outline-primary" type="button">Search</button>
+                                        </div>
+                                    </div>
+                                    {% csrf_token %}
+                                    {#                                        {{ form.as_p }}#}
+                                    <div id="illegal_query">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="card-body p-1">
+                            <div class="row">
+                                <div class="col-2 col-sm-1" style="border: 1px;margin-left: 0px; margin-right: 0px; margin-top: 0px">
+                                    <div class="nav-link" style="margin-top: 9px">
+                                        <input type="checkbox" id="VirusTotal3" name="VirusTotal3" value="VirusTotal">
+                                    </div>
+                                    <div class="nav-link" style="margin-top: 9px">
+                                        <input type="checkbox" id="AlienVault3" name="AlienVault3" value="AlienVault">
+                                    </div>
+                                    <div class="nav-link" style="margin-top: 9px">
+                                        <input type="checkbox" id="AnyRun3" name="AnyRun3" value="AnyRun">
+                                    </div>
+                                    <div class="nav-link" style="margin-top: 9px">
+                                        <input type="checkbox" id="MISP3" name="MISP3" value="MISP">
+                                    </div>
+                                    <div class="nav-link" style="margin-top: 9px">
+                                        <input type="checkbox" id="MalwareBazaar3" name="MalwareBazaar3" value="MalwareBazaar" checked="true" disabled="true">
+                                    </div>
+                                    <div class="nav-link" style="margin-top: 9px">
+                                        <input type="checkbox" id="VirusShare3" name="VirusShare3" value="VirusShare" checked="true" disabled="true">
+                                    </div>
+                                    <div class="nav-link" style="margin-top: 9px">
+                                        <input type="checkbox" id="MalShare3" name="MalShare3" value="MalShare" checked="true" disabled="true">
+                                    </div>
+                                    <div class="nav-link" style="margin-top: 9px">
+                                        <input type="checkbox" id="AbuseIPDB3" name="AbuseIPDB3" value="AbuseIPDB" checked="true" disabled="true">
+                                    </div>
+                                    <div class="nav-link" style="margin-top: 9px">
+                                        <input type="checkbox" id="THREATfox3" name="THREATfox3" value="THREATfox" checked="true" disabled="true">
+                                    </div>
+                                    <div class="nav-link" style="margin-top: 9px">
+                                        <input type="checkbox" id="VXVault3" name="VXVault3" value="VXVault" checked="true" disabled="true">
+                                    </div>
+                                    <div class="nav-link" style="margin-top: 9px">
+                                        <input type="checkbox" id="URLhaus3" name="URLhaus3" value="URLhaus" checked="true" disabled="true">
+                                    </div>
+                                    <div class="nav-link" style="margin-top: 9px">
+                                        <input type="checkbox" id="FEODOtracker3" name="FEODOtracker3" value="FEODOtracker" checked="true" disabled="true">
+                                    </div>
+                                    <div class="nav-link" style="margin-top: 9px">
+                                        <input type="checkbox" id="firehol3" name="firehol3" value="firehol" checked="true" disabled="true">
+                                    </div>
+                                </div>
+                                <div class="col-4 col-sm-2 d-flex align-items-start" style="margin-left: 0px; margin-top: 5px">
+                                    <div class="nav flex-column nav-pills me-3" id="list-tab" role="tablist">
+                                        <a class="nav-link VirusTotal" data-bs-toggle="pill" style="color: #2244ee" id="list-VirusTotal-list" data-toggle="list" href="#list-VirusTotal" role="tab" aria-controls="VirusTotal">
+                                            VirusTotal<i id="VirusTotalion" class="ion ion-checkmark" style="color: #1D00AF"></i></a>
+                                        <a class="nav-link list-group-item-action AlienVault" data-bs-toggle="pill" style="color: #2244ee" id="list-AlienVault-list" data-toggle="list" href="#list-AlienVault" role="tab" aria-controls="AlienVault">
+                                            AlienVault<i id="AlienVaultion" class="ion ion-checkmark" style="color: #1D00AF"></i></a>
+                                        <a class="nav-link list-group-item-action AnyRun" data-bs-toggle="pill" style="color: #2244ee" id="list-AnyRun-list" data-toggle="list" href="#list-AnyRun" role="tab" aria-controls="AnyRun">
+                                            AnyRun<i id="AnyRunion" class="ion ion-checkmark" style="color: #1D00AF"></i></a>
+                                        <a class="nav-link list-group-item-action MISP" data-bs-toggle="pill" style="color: #2244ee" id="list-MISP-list" data-toggle="list" href="#list-MISP" role="tab" aria-controls="MISP">
+                                            MISP<i id="MISPion" class="ion ion-checkmark" style="color: #1D00AF"></i></a>
+                                        <a class="nav-link list-group-item-action MalwareBazaar" data-bs-toggle="pill" style="font-size: 14px; color: #930539" id="list-MalwareBazaar-list" data-toggle="list" href="#list-MalwareBazaar" role="tab" aria-controls="MalwareBazaar">
+                                            MalwareBazaar<i id="MalwareBazaarion" class="ion ion-checkmark" style="color: #1D00AF"></i></a>
+                                        <a class="nav-link list-group-item-action VirusShare" data-bs-toggle="pill" style="color: #930539" id="list-VirusShare-list" data-toggle="list" href="#list-VirusShare" role="tab" aria-controls="VirusShare">
+                                            VirusShare<i id="VirusShareion" class="ion ion-checkmark" style="color: #1D00AF"></i></a>
+                                        <a class="nav-link list-group-item-action MalShare" data-bs-toggle="pill" style="color: #930539" id="list-MalShare-list" data-toggle="list" href="#list-MalShare" role="tab" aria-controls="MalShare">
+                                            MalShare<i id="MalShareion" class="ion ion-checkmark" style="color: #1D00AF"></i></a>
+                                        <a class="nav-link list-group-item-action AbuseIPDB" data-bs-toggle="pill" style="color: #930539" id="list-AbuseIPDB-list" data-toggle="list" href="#list-AbuseIPDB" role="tab" aria-controls="AbuseIPDB">
+                                            AbuseIPDB<i id="AbuseIPDBion" class="ion ion-checkmark" style="color: #1D00AF"></i></a>
+                                        <a class="nav-link list-group-item-action THREATfox" data-bs-toggle="pill" style="color: #930539" id="list-THREATfox-list" data-toggle="list" href="#list-THREATfox" role="tab" aria-controls="THREATfox">
+                                            THREATfox<i id="THREATfoxion" class="ion ion-checkmark" style="color: #1D00AF"></i></a>
+                                        <a class="nav-link list-group-item-action VXVault" data-bs-toggle="pill" style="color: #930539" id="list-VXVault-list" data-toggle="list" href="#list-VXVault" role="tab" aria-controls="VXVault">
+                                            VXVault<i id="VXVaultion" class="ion ion-checkmark" style="color: #1D00AF"></i></a>
+                                        <a class="nav-link list-group-item-action URLhaus" data-bs-toggle="pill" style="color: #930539" id="list-URLhaus-list" data-toggle="list" href="#list-URLhaus" role="tab" aria-controls="URLhaus">
+                                            URLhaus<i id="URLhausion" class="ion ion-checkmark" style="color: #1D00AF"></i></a>
+                                        <a class="nav-link list-group-item-action FEODOtracker" data-bs-toggle="pill" style="font-size: 14px; color: #930539" id="list-FEODOtracker-list" data-toggle="list" href="#list-FEODOtracker" role="tab" aria-controls="FEODOtracker">
+                                            FEODOtracker<i id="FEODOtrackerion" class="ion ion-checkmark" style="color: #1D00AF"></i></a>
+                                        <a class="nav-link list-group-item-action firehol" data-bs-toggle="pill" style="font-size: 14px; color: #930539" id="list-firehol-list" data-toggle="list" href="#list-firehol" role="tab" aria-controls="firehol">
+                                            firehol<i id="fireholion" class="ion ion-checkmark" style="color: #1D00AF"></i></a>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-sm-9" style="margin-left: 0px; margin-top: 0px">
+                                    <div class="tab-content" id="nav-tabContent">
+                                        <div class="tab-pane fade" id="list-VirusTotal" style="margin-left: 0px; margin-top: 15px" role="tabpanel" aria-labelledby="list-VirusTotal-list">
+                                            <div id="VirusTotal2" style="overflow-y: scroll; height:500px;">
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane fade" id="list-AlienVault" style="margin-left: 0px; margin-top: 20px" role="tabpanel" aria-labelledby="list-AlienVault-list">
+                                            <div id="AlienVault2" style="overflow-y: scroll; height:500px;">
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane fade" id="list-AnyRun" style="margin-left: 0px; margin-top: 20px" role="tabpanel" aria-labelledby="list-AnyRun-list">
+                                            <div id="AnyRun2" style="overflow-y: scroll; height:500px;">
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane fade" id="list-MISP" style="margin-left: 0px; margin-top: 20px" role="tabpanel" aria-labelledby="list-MISP-list">
+                                            <div id="MISP2" style="overflow-y: scroll; height:500px;">
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane fade" id="list-MalwareBazaar" style="margin-left: 0px; margin-top: 20px" role="tabpanel" aria-labelledby="list-MalwareBazaar-list">
+                                            <div id="MalwareBazaar2" name="MalwareBazaar" style="overflow-y: scroll; height:500px;">
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane fade" id="list-VirusShare" style="margin-left: 0px; margin-top: 20px" role="tabpanel" aria-labelledby="list-VirusShare-list">
+                                            <div id="VirusShare2" name="VirusShare" style="overflow-y: scroll; height:500px;">
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane fade" id="list-MalShare" style="margin-left: 0px; margin-top: 20px" role="tabpanel" aria-labelledby="list-MalShare-list">
+                                            <div id="MalShare2" name="MalShare" style="overflow-y: scroll; height:500px;">
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane fade" id="list-AbuseIPDB" style="margin-left: 0px; margin-top: 20px" role="tabpanel" aria-labelledby="list-AbuseIPDB-list">
+                                            <div id="AbuseIPDB2" name="AbuseIPDB" style="overflow-y: scroll; height:500px;">
+                                                AbuseIPDB2
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane fade" id="list-THREATfox" style="margin-left: 0px; margin-top: 20px" role="tabpanel" aria-labelledby="list-THREATfox-list">
+                                            <div id="THREATfox2" name="THREATfox" style="overflow-y: scroll; height:500px;">
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane fade" id="list-VXVault" style="margin-left: 0px; margin-top: 20px" role="tabpanel" aria-labelledby="list-VXVault-list">
+                                            <div id="VXVault2" name="VXVault" style="overflow-y: scroll; height:500px;">
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane fade" id="list-URLhaus" style="margin-left: 0px; margin-top: 20px" role="tabpanel" aria-labelledby="list-URLhaus-list">
+                                            <div id="URLhaus2" name="URLhaus" style="overflow-y: scroll; height:500px;">
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane fade" id="list-FEODOtracker" style="margin-left: 0px; margin-top: 20px" role="tabpanel" aria-labelledby="list-FEODOtracker-list">
+                                            <div id="FEODOtracker2" name="FEODOtracker" style="overflow-y: scroll; height:500px;">
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane fade" id="list-firehol" style="margin-left: 0px; margin-top: 20px" role="tabpanel" aria-labelledby="list-firehol-list">
+                                            <div id="firehol2" name="firehol" style="overflow-y: scroll; height:500px;">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    {% block scripts %}
+        {{ block.super }}
+        <script>
+            jQuery(function($) {
+                {#var o = { val1: "bob", val2: false, nestedObj: { val3: "ug" }};#}
+                {#try {#}
+                {#    $("#dynamicJson-output").empty().simpleJson({ jsonObject: o });#}
+                {# catch (e) {#}
+                {#    $("#dynamicJson-output").empty().append("Exception caught running plugin : " + e);#}
+                {#    alert(e);#}
+                {##}
+                {#$("#dynamicJson-process").click(function () {#}
+                {#    try {#}
+                {#        $("#dynamicJson-output").empty();#}
+                {#        var o = $("#dynamicJson").val();#}
+                {#        var processedObject = JSON.parse(o);#}
+                {#        $("#dynamicJson-output").simpleJson({ jsonObject: processedObject });#}
+                {##}
+                {#    } catch (ex) {#}
+                {#        alert("Unable to process json: " + ex);#}
+                {#    }#}
+                {#);#}
+                let vt = 'VirusTotal';
+                let av = 'AlienVault';
+                let ar = 'AnyRun';
+                let misp = 'MISP';
+                let mb = 'MalwareBazaar';
+                let ms = 'MalShare';
+                let vs = 'VirusShare';
+                let tf = 'THREATfox';
+                let uh = 'URLhaus';
+                let ai = 'AbuseIPDB';
+                let ft = 'FEODOtracker';
+                let vv = 'VXVault';
+                let fh = 'firehol';
+                var html = '';
+                let md5 = new RegExp('^[a-fA-F0-9]{32}$');
+                let sha1 = new RegExp('^[a-fA-F0-9]{40}$');
+                let sha256 = new RegExp('^[a-fA-F0-9]{64}$');
+                let ip = new RegExp('^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$');
+                let domain = new RegExp('^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9](?:\.[a-zA-Z]{2,})+$');
+                $( ".ion" ).each(function() {
+                    $( this ).hide();
+                });
+                {#$('#list-tab a').click(function(e) {#}
+                {#    e.preventDefault();#}
+                {#    var divname = $(this).text();#}
+                {#    alert('here in' + divname.trim() + $(divname.trim() + '2').text());#}
+                {#    alert($('list-' + divname.trim()))#}
+                {#    $('list-' + divname.trim()).addClass("show active" );#}
+                {#$('list-' + divname.trim())#}
+                {#$('list-' + divname.trim()).fadeToggle();#}
+                {#);#}
+                $('#illegal_query').html('');
+                $("#btnSubmit").click(function(e){
+                    e.preventDefault();
+                    {#$("#dialog").dialog({ autoOpen: false, modal: true, height: 170, width: 160,  });#}
+                    {#$("#dialog").dialog();#}
+                    $( ".ion" ).each(function() {
+                        $( this ).hide();
+                    });
+                    $('#illegal_query').html('');
+                    var query = $("#query1").val()
+                    var apikey = "{{ apikey }}"
+                    {#if (apikey == "") {#}
+                    {#    apikey = $("#apikey").val()#}
+                    {##}
+                    if (query != '' && apikey != '') {
+                        $('#parent').append('<div id="dialog" title="Loading...">' +
+                            '<img src="{% static 'dist/img/19-0.gif' %}" /></div>');
+                        $("#dialog").dialog({
+                            position: { my: "center", at: "center" }
+                        });
+                        $("#dialog").hide();
+                        $("#VirusTotal2").html('')
+                        $("#AlienVault2").html('')
+                        $("#AnyRun2").html('')
+                        $("#MISP2").html('')
+                        {#var tmm = $('#tmmenutitle1');#}
+                        {#tmm.html('');#}
+                        {#tmm.hide();#}
+                        {#tmm = $('#tmmenutitle2');#}
+                        {#tmm.html('');#}
+                        {#tmm.hide();#}
+                        {#tmm = $('#tmmenutitle3');#}
+                        {#tmm.html('');#}
+                        {#tmm.hide();#}
+                        {#tmm = $('#tmmenutitle4');#}
+                        {#tmm.html('');#}
+                        {#tmm.hide();#}
+                        {#tmm = $('#tmmenutitle5');#}
+                        {#tmm.html('');#}
+                        {#tmm.hide();#}
+                        var isQuery = false;
+                        if (md5.test(query) || sha1.test(query) ||sha256.test(query)) {
+                            isQuery = true;
+                        } else if (ip.test(query)) {
+                            isQuery = true;
+                        } else if (isURL(query) || isValidURL(query)) {
+                            isQuery = true;
+                        }
+                        if (isQuery)
+                            oneByOne(apikey, query)
+                            {#inParallel(apikey, query)#}
+                        else {
+                            $("#dialog").hide();
+                            $("#dialog").remove();
+                            $('#illegal_query').html('<div class="alert alert-warning alert-dismissible fade show" role="alert"> ' +
+                                '<strong>Illegal data or Api Key</strong> for query, Api Key and MD5,SHA1,SHA256,IP,URL or DOMAIN required. ' +
+                                '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> ' +
+                                '</div>');
+                        }
+                    } else {
+                        $('#illegal_query').html('<div class="alert alert-warning alert-dismissible fade show" role="alert"> ' +
+                            '<strong>Illegal data or Api Key</strong> for query, Api Key and MD5,SHA1,SHA256,IP,URL or DOMAIN required. ' +
+                            '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> ' +
+                            '</div>');
+                    }
+                });
+                async function oneByOne(apikey, query) {
+                    const number1 = await searchFromUC(apikey, query);
+                    {#const number1 = await searchFromUC(query);#}
+                    {#if($('#virustotal').prop('checked')) {#}
+                    {#    const number2 = await searchFromVirusTotal(query);#}
+                    {##}
+
+                }
+                async function inParallel(apikey, query) {
+                    var promise1 = searchFromUC(apikey, query);
+                    {#var promise2 = null#}
+                    {#if ($('#virustotal').prop('checked') || $('#virustotal3').prop('checked')) {#}
+                    {#    promise2 = searchFromVirusTotal(query);#}
+                    {##}
+                    {#var promise3 = null#}
+                    {#if ($('#alienvault').prop('checked') || $('#alienvault3').prop('checked')) {#}
+                    {#    promise3 = searchFromAlienVault(query);#}
+                    {##}
+                    {#var promise4 = null#}
+                    {#if ($('#anyrun').prop('checked') || $('#anyrun3').prop('checked')) {#}
+                    {#    promise4 = searchFromAnyRun(query);#}
+                    {##}
+                    {#var promise5 = null#}
+                    {#if ($('#misp').prop('checked') || $('#misp3').prop('checked')) {#}
+                    {#    promise5 = searchFromMISP(query);#}
+                    {##}
+                    const number1 = await promise1;
+                    {#const number2 = await promise2;#}
+                    {#const number3 = await promise3;#}
+                    {#const number4 = await promise4;#}
+                    {#const number5 = await promise5;#}
+                }
+                async function searchFromUC(apikey, query) {
+                    $("#MalwareBazaarion").hide();
+                    $("#VirusShareion").hide();
+                    $("#MalShareion").hide();
+                    $("#AbuseIPDBion").hide();
+                    $("#THREATfoxion").hide();
+                    $("#VXVaultion").hide();
+                    $("#URLhausion").hide();
+                    $("#FEODOtrackerion").hide();
+                    $("#fireholion").hide();
+                    $("#VirusTotalion").hide();
+                    $("#AlienVaultion").hide();
+                    $("#AnyRunion").hide();
+                    $("#MISPion").hide();
+                    {#let url = new URL('http://192.168.1.35:5000/iocs/api/v1/')#}
+                    {#let url = new URL('http://127.0.0.1:5000/iocs/api/v1/')#}
+                    {#let url = new URL('http://10.8.0.34:5000/iocs/api/v1/')#}
+                    {#let url = new URL('http://185.214.134.100:5000/iocs/api/v1/')#}
+                    let url = "{{ url }}"
+                    let headers = new Headers();
+                    headers.set('Authorization', 'Basic ' + btoa("1:" + apikey));
+                    headers.set('content-type', 'application/json');
+                    let sources = []
+                    $( "form input:checkbox" ).each(function() {
+                        if ($(this).prop('checked')) {
+                            sources.push($(this).val())
+                        }
+                    });
+                    let data = {
+                        query:query,
+                        sources:sources
+                    }
+                    let sil = JSON.stringify(data)
+                    try {
+                        let response = await fetch(url, {
+                            method: 'POST',
+                            credentials: "include",
+                            mode: 'cors',
+                            headers: headers,
+                            body: JSON.stringify(data),
+                        });
+                        $("#dialog").hide();
+                        $("#dialog").remove();
+                        const resp = await response.json();
+                        if (response.status != 200) {
+                        {#if (resp['query_status'] == 'Illegal_apikey' || resp['query_status'] == 'Illegal_query' || resp['query_status'] == 'Unexpected api error') {#}
+                            $('#illegal_query').html('<div class="alert alert-warning alert-dismissible fade show" role="alert"> ' +
+                                "<strong>" + resp['data'] + "</strong>" +
+                                '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> ' +
+                                '</div>');
+                        } else {
+                            $("#MalwareBazaar2").html('');
+                            $("#virusshare2").html('');
+                            $("#MalShare2").html('');
+                            $("#AbuseIPDB2").html('');
+                            $("#THREATfox2").html('');
+                            $("#VXVault2").html('');
+                            $("#URLhaus2").html('');
+                            $("#FEODOtracker2").html('');
+                            $("#firehol2").html('');
+                            $('#VirusTotal2').html('');
+                            $("#AlienVaultion").html('');
+                            $("#AnyRunion").html('');
+                            $("#MISPion").html('');
+                            html1 = ''
+                            $.each(resp, function (key, val) {
+                                {#html = '<table style="border: 1px solid black;">';#}
+                                {#'<thead style="border: 1px solid black;">' +#}
+                                {#'<tr>' +#}
+                                {#'<th style="width: 20%">Key</th>' +#}
+                                {#'<th style="width: 60%">Value</th>' +#}
+                                {#'</tr></thead>';#}
+                                {#html1 = readJSArrayT(val);#}
+                                {#html = html1 + '</table>'#}
+                                {#$('#' + key + '2').html(html);#}
+                                $('#' + key + '2').empty().simpleJson({ jsonObject: val });
+                                $('#' + key + 'ion').show();
+                            });
+                            if (resp.length == 0) {
+                                $('#illegal_query').html('<div class="alert alert-warning alert-dismissible fade show" role="alert"> ' +
+                                    '<strong>No results.</strong>' +
+                                    '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> ' +
+                                    '</div>');
+                            }
+                        }
+                    } catch(error) {
+                        $("#dialog").hide()
+                        $("#dialog").remove();
+                        console.log(error);
+                    }
+                }
+
+                function readJSArray(resp){
+                    var keys = Object.keys(resp);
+                    keys.forEach(function(key) {
+                        {#console.log('key::>' + key + '::' + names[key] + '::' + typeof (names[key]));#}
+                        if (resp[key] != 'undefined' && resp[key] != null && typeof (resp[key]) == "object") {
+                            if (key != 'last_dns_records' && key != 'data' && key != 'jarm'
+                                && key != 'whois' && key != 'last_https_certificate_date') {
+                                html += "<strong>" + key + "</strong><br>";
+                            }
+                            readJSArray(resp[key])
+                        } else {
+                            if (key != 'last_dns_records' && key != 'data' && key != 'jarm'
+                                && key != 'whois' && key != 'last_https_certificate_date'
+                                && resp[key] != null && resp[key] != '') {
+                                html += "<strong>" + key + "</strong>: " + resp[key] + "<br>";
+                            }
+                        }
+                    });
+                    return html;
+                };
+                function readJSArrayT(resp){
+                    var keys = Object.keys(resp);
+                    keys.forEach(function(key) {
+                        {#console.log('key::>' + key + '::' + names[key] + '::' + typeof (names[key]));#}
+                        if (resp[key] != 'undefined' && resp[key] != null && typeof (resp[key]) == "object") {
+                            if (key != 'last_dns_records' && key != 'data' && key != 'jarm'
+                                && key != 'whois' && key != 'last_https_certificate_date') {
+                                html += '<tr><td class="">' + key + '</td><td></td></tr>';
+                            }
+                            readJSArrayT(resp[key])
+                        } else {
+                            if (key != 'last_dns_records' && key != 'data' && key != 'jarm'
+                                && key != 'whois' && key != 'last_https_certificate_date'
+                                && resp[key] != null && resp[key] != '') {
+                                html += '<tr><td class="">' + key + '</td><td class="">' + resp[key] + '</td></tr>';
+                            }
+                        }
+                    });
+                    return html;
+                };
+                function isURL(str) {
+                    var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+                        '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|'+ // domain name
+                        '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+                        '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+                        '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+                        '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+                    return pattern.test(str);
+                };
+                function isValidURL(string) {
+                    var res = string.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g);
+                    return (res !== null)
+                };
+            });
+        </script>
+    {% endblock %}
+{% endblock content %}
+
+{% block javascripts %}
+{% endblock javascripts %}

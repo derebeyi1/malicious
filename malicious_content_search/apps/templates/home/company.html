@@ -1,0 +1,281 @@
+{% extends "layouts/base-fullscreen.html" %}
+{#{% extends "layouts/base.html" %}#}
+{% load static %}
+{% block title %} Company {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+{% endblock stylesheets %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-12 mb-4">
+            <div class="card border-0 shadow components-section">
+                <div class="card-header">
+                    <div class="d-flex">
+                        <div class="me-auto">
+                            {% if islem == 'update' %}
+                                <h1 class="h6">Update Company</h1>
+                            {%  else %}
+                                <h1 class="h6">Create Company</h1>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-sm-center">
+                            {% if messages %}
+                                {% for message in messages %}
+                                    <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-left: 0px;margin-right: 0px">
+                                        {{ message }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
+{#                                                    {{ form.as_p }}#}
+                        <div class="row mb-4">
+                            <div class="col-lg-4 col-sm-6">
+                                <div class="form-group mb-4">
+                                    <label for="companyname">Company Name</label>
+                                    <div class="input-group">
+                                        {{ form.name }}
+                                    </div>
+                                    <span class="text-error">{{ form.name.errors }}</span>
+                                </div>
+                                <div class="form-group mb-4">
+                                    <label for="licensetype">License Type</label>
+                                    <div class="input-group">
+                                        {{ form.licensetype }}
+                                    </div>
+                                    <span class="text-error">{{ form.licensetype.errors }}</span>
+                                </div>
+                                <div class="form-group mb-4">
+                                    <label for="email">Company E-Mail</label>
+                                    <div class="input-group">
+                                        {{ form.email }}
+                                    </div>
+                                    <span class="text-error">{{ form.email.errors }}</span>
+                                </div>
+                                <div class="form-group mb-4">
+                                    <label for="licensestartdate">License Start Date</label>
+                                    <div class="input-group">
+                                        {{ form.licensestartdate }}
+                                    </div>
+                                    <span class="text-error">{{ form.licensestartdate.errors }}</span>
+                                </div>
+                                <div class="form-group mb-4">
+                                    <div class="input-group">
+                                        {{ form.apikey }}
+                                        <div class="input-group-append">
+                                            <i id="genapikey" class="fas fa-key" style="font-size: 32px; color: #6C7AE0" data-toggle="tooltip" title="Generate Api Key" aria-label="apikey"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-sm-6">
+                                <div class="form-group mb-4">
+                                    <label for="linkedinname">LinkedIn Name</label>
+                                    <div class="input-group">
+                                        {{ form.linkedinname }}
+                                    </div>
+                                    <span class="text-error">{{ form.linkedinname.errors }}</span>
+                                </div>
+                                <div class="form-group mb-4">
+                                    <label for="country">Country</label>
+                                    <div class="input-group">
+                                        {{ form.country }}
+                                    </div>
+                                    <span class="text-error">{{ form.country.errors }}</span>
+                                </div>
+                                <div class="form-group mb-4">
+                                    <label for="companysize">Company Size</label>
+                                    <div class="input-group">
+                                        {{ form.companysize }}
+                                    </div>
+                                    <span class="text-error">{{ form.companysize.errors }}</span>
+                                </div>
+                                <div class="form-group mb-4">
+                                    <label for="licenseenddate">License End Date</label>
+                                    <div class="input-group">
+                                        {{ form.licenseenddate }}
+                                    </div>
+                                    <span class="text-error">{{ form.licenseenddate.errors }}</span>
+                                </div>
+                            </div>
+                            {#                        </div>#}
+                            {#                        <div class="row mb-4">#}
+                            <div class="col-lg-4 col-sm-6">
+                                <div class="form-group mb-4">
+                                    <label for="shodanname">Shodan Name</label>
+                                    <div class="input-group">
+                                        {{ form.shodanname }}
+                                    </div>
+                                    <span class="text-error">{{ form.shodanname.errors }}</span>
+                                </div>
+                                <div class="form-group mb-4">
+                                    <label for="activityarea">Activity Area</label>
+                                    <div class="input-group">
+                                        {{ form.activityarea }}
+                                    </div>
+                                    <span class="text-error">{{ form.activityarea.errors }}</span>
+                                </div>
+                                <div class="form-group mb-4">
+                                    <label for="securitygrade">Security Grade</label>
+                                    <div class="input-group">
+                                        {{ form.securitygrade }}
+                                    </div>
+                                    <span class="text-error">{{ form.securitygrade.errors }}</span>
+                                </div>
+                                <div class="form-group mb-4">
+                                    <label for="logo">Logo</label>
+                                    <div class="input-group">
+                                        {{ form.logo }}
+                                        {% if form.logo and form.logo != '' %}
+                                            <img id="id_logo" src="/apps/media/{{ form.logo.value }}" style="width: 50px; height: 50px;">
+                                        {% else %}
+                                            <img id="img1" src=" " style="width: 50px; height: 50px;">
+                                        {% endif %}
+                                    </div>
+                                    <span class="text-error">{{ form.logo.errors }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="width:100%">
+                            <div style="margin: 0 auto; text-align: center;">
+                                {% if islem == 'update' %}
+                                    <button type="submit" name="user" class="btn btn-primary" onclick="return confirm('Are you sure to update?')" style="background-color: #A64AC9">Update User</button>
+                                {% else %}
+                                    <button type="submit" name="user" class="btn btn-primary" style="text-align:center;background-color: #A64AC9">Create User</button>
+                                {% endif %}
+                            </div>
+                        </div>
+{#                        <div class="row mb-4">#}
+{#                            {% if islem == 'update' %}#}
+{#                                <button type="submit" name="company" class="btn btn-behance" onclick="return confirm('Are you sure to update?')">Update Company</button>#}
+{#                            {% else %}#}
+{#                                <button type="submit" name="company" class="btn btn-behance" style="background-color: #A64AC9">Create Company</button>#}
+{#                            {% endif %}#}
+{#                        </div>#}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% block scripts %}
+        {#        {{ block.super }}#}
+        <script>
+            jQuery(function($) {
+                {#$(window).bind("beforeunload", function() {#}
+                {##}
+                {#    window.opener.location.reload();#}
+                {#return true;#}
+                {##}
+                {#);#}
+                $("#genapikey").click(function (e) {
+                    e.preventDefault();
+                    var apikey = createUUID();
+                    $("#id_apikey").val(apikey);
+                });
+                {#$('#id_logo').on('change', function () {#}
+                {#    $("#imglogo").attr("src", '/' + this.value);#}
+                {#);#}
+                {#$("#divBackground").on('hide', function () {#}
+                {#    window.opener.location.reload();#}
+                {#);#}
+                var licensetypeTags =
+                {{ licensetypeTags|safe }}
+                var companysizeTags =
+                {{ companysizeTags|safe }}
+                var countryTags = {{ countries|safe }};
+                var activityareaTags =
+                {{ activityareaTags|safe }}
+                var securitygradeTags = {{ securitygradeTags|safe }}
+                    $("#id_country").autocomplete({
+                        source: countryTags,
+                        minLength: 0
+                    }).bind('focus', function () {
+                        $(this).autocomplete("search");
+                    });
+                $("#id_licensetype").autocomplete({
+                    source: licensetypeTags,
+                    scroll: true,
+                    minLength: 0
+                }).bind('focus', function () {
+                    $(this).autocomplete("search");
+                });
+                $("#id_companysize").autocomplete({
+                    source: companysizeTags,
+                    minLength: 0
+                }).bind('focus', function () {
+                    $(this).autocomplete("search");
+                });
+                $("#id_activityarea").autocomplete({
+                    source: activityareaTags,
+                    minLength: 0
+                }).bind('focus', function () {
+                    $(this).autocomplete("search");
+                });
+                $("#id_securitygrade").autocomplete({
+                    source: securitygradeTags,
+                    minLength: 0
+                }).bind('focus', function () {
+                    $(this).autocomplete("search");
+                });
+
+                {#$(window).on("beforeunload", function() {#}
+                {#    return confirm("Do you really want to close?");#}
+                {#)#}
+                {#$(window).unload(function() {#}
+                {#    window.opener.location.reload();#}
+                {#;#}
+                {#$( "#tags" ).autocomplete({#}
+                {#    source: availableTags,#}
+                {#    minLength:0#}
+                {#).bind('focus', function(){ $(this).autocomplete("search"); } );#}
+            });
+            function createUUID() {
+                var s = [];
+                var hexDigits = "0123456789abcdef";
+                for (var i = 0; i < 36; i++) {
+                    s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1);
+                }
+                s[14] = "4";  // bits 12-15 of the time_hi_and_version field to 0010
+                s[19] = hexDigits.substr((s[19] & 0x3) | 0x8, 1);  // bits 6-7 of the clock_seq_hi_and_reserved to 01
+                s[8] = s[13] = s[18] = s[23] = "-";
+
+                var uuid = s.join("");
+                return uuid;
+            }
+            function PopupCenter(pageURL, title,w,h) {
+                var left = (screen.width/2)-(w/2);
+                var top = (screen.height/2)-(h/2);
+                var targetWin = window.open (pageURL, title, 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width='+w+', height='+h+', top='+top+', left='+left);
+                return targetWin;
+            }
+            function HideModalDiv()
+            {
+                var bcgDiv = document.getElementById("divBackground");
+                bcgDiv.style.display="none";
+            }
+            function OnClose()
+            {
+                if(window.opener != null && !window.opener.closed)
+                {
+                    {#window.opener.location.reload();#}
+                    window.opener.HideModalDiv();
+                }
+            }
+            function refreshParent() {
+                window.opener.location.reload();
+            }
+            window.onunload = refreshParent;
+        </script>
+    {% endblock %}
+{% endblock content %}
+
+{% block javascripts %}
+{% endblock javascripts %}

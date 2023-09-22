@@ -1,0 +1,387 @@
+{% extends "layouts/base.html" %}
+{% block title %} Dashboard {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+    <div id="parent" class="wrapper">
+        <div class="content-wrapper">
+            <div class="row mb-4">
+{#                {% if messages %}#}
+{#                    <ul class="messages">#}
+{#                        {% for message in messages %}#}
+{#                            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>#}
+{#                        {% endfor %}#}
+{#                    </ul>#}
+{#                {% endif %}#}
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert {% if message.tags == 'error' %} alert-danger {% else %} alert-success {% endif %} alert-dismissible fade show in text-center" role="alert">
+                            {{ message|safe }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <div class="d-flex flex-row bd-highlight mb-3" style="padding-top: 0px">
+                <div class="p-2 bd-highlight col-sm-4">
+                    <h1 class="h5">IOCs Statistics</h1>
+                </div>
+                <div class="p-2 bd-highlight col-sm-2">
+                    <a id="adaily" class="adaily" href="#" style="color: #2db5c2">
+                        <input type="radio" id="daily" name="daily">
+                        Daily</a>
+                </div><!-- /.col -->
+                <div class="p-2 bd-highlight col-sm-2">
+                    <a id="aweekly" class="aweekly" href="#" style="color: #2db5c2">
+                        <input type="radio" id="weekly" name="weekly">
+                        Weekly</a>
+                </div><!-- /.col -->
+                <div class="p-2 bd-highlight col-sm-2">
+                    <a id="amonthly" class="amonthly" href="#" style="color: #2db5c2">
+                        <input type="radio" id="monthly" name="monthly">
+                        Monthly</a>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="card" style="background-color: #0DCAF0">
+                        <div class="card-body ">
+                            <h3 class="card-title" style="color: #FFFFFF">{{ data.malwares }}</h3>
+                            <div class="row">
+                                <div class="col-8"><p class="card-text" style="color: #FFFFFF">Malwares&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p></div>
+                                <div class="col-4 icon"><i class="ion ion-bug" style="font-size:60px;"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="card" style="background-color: #198754">
+                        <div class="card-body">
+                            <h3 class="card-title" style="color: #FFFFFF">{{ data.malips }}</h3>
+                            <div class="row">
+                                <div class="col-8"><p class="card-text" style="color: #FFFFFF">Malicious IPs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p></div>
+                                <div class="col-4 icon"><i class="ion ion-network" style="font-size:60px;"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="card" style="background-color: #FFC107">
+                        <div class="card-body">
+                            <h3 class="card-title" style="color: #FFFFFF">{{ data.maldomains }}</h3>
+                            <div class="row">
+                                <div class="col-8"><p class="card-text" style="color: #FFFFFF">Malicious Domains&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p></div>
+                                <div class="col-4 icon"><i class="ion ion-monitor" style="font-size:60px;"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="card" style="background-color: #DC3545">
+                        <div class="card-body">
+                            <h3 class="card-title" style="color: #FFFFFF">{{ data.malurls }}</h3>
+                            <div class="row">
+                                <div class="col-8"><p class="card-text" style="color: #FFFFFF">Malicious URLs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p></div>
+                                <div class="col-4 icon"><i class="ion ion-code-download" style="font-size:60px;"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="padding-top: 10px">
+                <section class="col-lg-7 connectedSortable">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title">
+                                <div class="row">
+                                    <div class="col col-1">
+                                        <i class="fas fa-chart-pie mr-1"></i>
+                                    </div>
+                                    <div class="col col-5">
+                                        <h1 class="h6">IOCs by Sources</h1>
+                                    </div>
+                                </div>
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="container">
+                                <h2 class="text-center"></h2>
+                                <canvas id="barChart1" width="300" height="300"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section class="col-lg-5 connectedSortable">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title">
+                                <div class="row">
+                                    <div class="col col-1">
+                                        <i class="fas fa-chart-pie mr-1"></i>
+                                    </div>
+                                    <div class="col col-7">
+                                        <h1 class="h6">IOCs by Types</h1>
+                                    </div>
+                                </div>
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="container">
+                                <h2 class="text-center"></h2>
+                                <canvas id="barChart" width="300" height="300"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section class="col-lg-7 connectedSortable" style="padding-top: 10px">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title">
+                                <div class="row">
+                                    <div class="col col-1">
+                                        <i class="fas fa-chart-bar mr-1"></i>
+                                    </div>
+                                    <div class="col col-7">
+                                        <h1 class="h6">IOCs by Sources</h1>
+                                    </div>
+                                </div>
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="container">
+                                <h2 class="text-center"></h2>
+                                <canvas id="barChart2" width="400" height="268"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section class="col-lg-5 connectedSortable">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title">
+                                <div class="row">
+                                    <div class="col col-1">
+                                        <i class="fas fa-chart-pie mr-1"></i>
+                                    </div>
+                                    <div class="col col-9">
+                                        <h1 class="h6">Searches by IOCs Types</h1>
+                                    </div>
+                                </div>
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="container">
+                                <h2 class="text-center"></h2>
+                                <canvas id="barChart3" width="600" height="300"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section class="col-lg-12 connectedSortable">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title">
+                                <div class="row">
+                                    <div class="col col-1">
+                                        <i class="fas fa-table"></i>
+                                    </div>
+                                    <div class="col col-9">
+                                        <h1 class="h6">Most Searched IOCs</h1>
+                                    </div>
+                                </div>
+                            </h5>
+                        </div>
+                        <div class="card-body table-responsive p-0">
+                            <table class="table table-striped table-valign-middle">
+                                <thead>
+                                <tr>
+                                    <th>IOCs</th>
+                                    <th style="width: 20px;">Count</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for key, value in searches.items %}
+                                    <tr>
+                                        <td>{{key}}</td>
+                                        <td style="width: 20px;">{{value}}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+        <aside class="control-sidebar control-sidebar-dark">
+        </aside>
+    </div>
+    <script>
+        jQuery(document).ready(function() {
+            var mesaj = $('.alert').text();
+            if (mesaj.indexOf('Daily') > -1)
+                $('#daily').prop('checked',true);
+            if (mesaj.indexOf('Weekly') > -1)
+                $('#weekly').prop('checked',true);
+            if (mesaj.indexOf('Monthly') > -1)
+                $('#monthly').prop('checked',true);
+            window.setTimeout(function() {
+                $(".alert").fadeTo(1000, 0).slideUp(1000, function(){
+                    var mesaj = $('.alert').text();
+                    if (mesaj.indexOf('Daily') > -1)
+                        $('#daily').prop('checked',true);
+                    if (mesaj.indexOf('Weekly') > -1)
+                        $('#weekly').prop('checked',true);
+                    if (mesaj.indexOf('Monthly') > -1)
+                        $('#monthly').prop('checked',true);
+                    $(this).remove();
+                });
+            }, 700);
+            $('#daily').change(function() {
+                var url = '/iocs/index?id=1'
+                window.location.href = url
+            });
+            $('.adaily').click(function(e) {
+                e.preventDefault();
+                var url = '/iocs/index?id=1'
+                window.location.href = url
+            });
+            $('#weekly').change(function() {
+                var url = '/iocs/index?id=7'
+                window.location.href = url
+            });
+            $('.aweekly').click(function(e) {
+                e.preventDefault();
+                var url = '/iocs/index?id=7'
+                window.location.href = url
+            });
+            $('#monthly').change(function() {
+                var url = '/iocs/index?id=30'
+                window.location.href = url
+            });
+            $('.amonthly').click(function(e) {
+                e.preventDefault();
+                var url = '/iocs/index?id=30'
+                window.location.href = url
+            });
+            var chartDiv = $("#barChart");
+            var chartDiv1 = $("#barChart1");
+            var chartDiv2 = $("#barChart2");
+            var chartDiv3 = $("#barChart3");
+            var chartDiv4 = $("#barChart4");
+            var myChart = new Chart(chartDiv, {
+                type: 'pie',
+                data: {
+                    {#labels: ["Pending", "InProgress", "OnHold", "Complete", "Cancelled"],#}
+                    labels: ["Malwares", "Malicious IPs", "Malicious Domains", "Malicious URLs"],
+                    datasets: [
+                        {
+                            data: [{{ data.malwares }},{{ data.malips }}, {{ data.maldomains }}, {{ data.malurls }}],
+                            backgroundColor: [
+                                "#0DCAF0",
+                                "#198754",
+                                "#FFC107",
+                                "#DC3545",
+                            ]
+                        }]
+                },
+                options: {
+                    title: {
+                        display: true,
+                        text: 'IOCs'
+                    },
+                    responsive: true,
+                    maintainAspectRatio: false,
+                }
+            });
+            var myChart1 = new Chart(chartDiv1, {
+                type: 'pie',
+                data: {
+                    {#labels: ["Pending", "InProgress", "OnHold", "Complete", "Cancelled"],#}
+                    labels: ["MalShare", "MalwareBazaar", "VirusShare", "FEODOtracker", "THREATfox", "VXVault", "AbuseIPDB", "URLhaus"],
+                    datasets: [
+                        {
+                            data: [{{ data.MalShare }},{{ data.MalwareBazaar }}, {{ data.VirusShare }}, {{ data.FEODOtracker }}, {{ data.THREATfox }}, {{ data.VXVault }}, {{ data.AbuseIPDB }}, {{ data.URLhaus }}],
+                            backgroundColor: [
+                                "#6382ff",
+                                "#4BC0C0",
+                                "#FFCE56",
+                                "#d723fa",
+                                "#2b8bbe",
+                                "#050D2F",
+                                "#D23D1B",
+                                "#39c717",
+                            ]
+                        }]
+                },
+                options: {
+                    title: {
+                        display: true,
+                        text: 'IOCs'
+                    },
+                    responsive: true,
+                    maintainAspectRatio: false,
+                }
+            });
+            var myChart2 = new Chart(chartDiv2, {
+                type: 'bar',
+                data: {
+                    labels: ["MalShare", "MalwareBazaar", "VirusShare", "FEODOtracker", "THREATfox", "VXVault", "AbuseIPDB", "URLhaus"],
+                    datasets: [
+                        {
+                            label: "Population (millions)",
+                            backgroundColor: [
+                                "#6382ff",
+                                "#4BC0C0",
+                                "#FFCE56",
+                                "#d723fa",
+                                "#2b8bbe",
+                                "#050D2F",
+                                "#D23D1B",
+                                "#39c717",],
+                            data: [{{ data.MalShare }},{{ data.MalwareBazaar }}, {{ data.VirusShare }}, {{ data.FEODOtracker }}, {{ data.THREATfox }}, {{ data.VXVault }}, {{ data.AbuseIPDB }}, {{ data.URLhaus }}]
+                        }
+                    ]
+                },
+                options: {
+                    legend: { display: false },
+                    title: {
+                        display: true,
+                        {#text: 'Predicted world population (millions) in 2050'#}
+                    }
+                }
+            });
+            var myChart3 = new Chart(chartDiv3, {
+                type: 'pie',
+                data: {
+                    {#labels: ["Pending", "InProgress", "OnHold", "Complete", "Cancelled"],#}
+                    labels: ["Malwares", "Malicious IPs", "Malicious Domains", "Malicious URLs"],
+                    datasets: [
+                        {
+                            data: [{{ types.malware }},{{ types.ip }}, {{ types.domain }}, {{ types.url }}],
+                            backgroundColor: [
+                                "#0DCAF0",
+                                "#198754",
+                                "#FFC107",
+                                "#DC3545",
+                            ]
+                        }]
+                },
+                options: {
+                    title: {
+                        display: true,
+                        text: 'IOCs'
+                    },
+                    responsive: true,
+                    maintainAspectRatio: false,
+                }
+            });
+        });
+    </script>
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}

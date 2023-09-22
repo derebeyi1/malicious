@@ -1,0 +1,3 @@
+Zararlı ip adresleri, domainler, executable programlar vb. ilgili sitelerden scriptler aracılığıyla günde 2 defa çekilerek veritabanına yazılmakta ve daha sonra tek bir sorgu ekranında hem RestApi ile veritabanından hem de online hizmet veren diğer web sitelerinden eşzamanlı olarak sorgulanmakta ve Dashboard'da grafiksel olarak gösterilmektedir.
+Program çalıştırılmadan önce initial_db.json dosyası "python manage.py loaddata initial_db.json" komutu ile veritabanı yüklenmelidir.
+Ayrıca UC projesindeki scriptler "python malshare.py" şeklinde çalıştırılarak online web sitelerinden veriler çekilmelidir.

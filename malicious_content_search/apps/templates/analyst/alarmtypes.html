@@ -1,0 +1,718 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% load temptags %}
+{% block content %}
+
+    <div id="divalarmtypes" class="row">
+        <div class="col-12 mb-4">
+            <div class="card border-0 shadow components-section">
+                <div class="card-header">
+                    <div class="d-flex">
+                        <div class="me-auto">
+                            <h1 class="h6">Alarm Types</h1>
+                        </div>
+                        <div id="atmessagediv" class="row mb-4" style="display:none">
+                            <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-left: 0px;margin-right: 0px">
+                                <span id="atmessage"></span>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        </div>
+                        <div class="ms-auto">
+                            <a href="#" id="addBtn">
+                                <i class="fa fa-plus" style="font-size: 18px; color: green" data-toggle="tooltip" title="Create Alarm Type"></i>
+                            </a>
+                            <a href="#" id="hideBtn" style="display:none">
+                                <i class="fa fa-minus" style="font-size: 18px; color: green" data-toggle="tooltip" title="Create Alarm Type"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div id="form" style="display:none">
+                    <div class="card-body">
+                        <div class="card border-1 components-section" style="border-color: black">
+                            <div class="card-body">
+                                <form id="alarmtypes-form" method="post" action="" enctype="multipart/form-data" novalidate>
+                                    <div class="row">
+                                        <div class="input-group">
+                                            <input type="hidden" id="id_id" name="id" value="">
+                                        </div>
+                                        {% csrf_token %}
+                                        {% for field in form %}
+                                            {% if field.name == 'description' %}
+                                                <div class="form-group col-12">
+                                                    <label class="col-12">{{ field.label }}</label>
+                                                    <div class="input-group col-12">
+                                                        <textarea name="description" style="width:100%" rows="15" required="" id="id_description"></textarea>
+                                                    </div>
+                                                    <span class="text-error" style="color: rgb(255, 0, 0);"></span>
+                                                </div>
+                                            {% elif field.name == 'mitigation' %}
+                                                <div class="form-group col-12">
+                                                    <label class="col-12">{{ field.label }}</label>
+                                                    <div class="input-group col-12">
+                                                        <textarea name="mitigation" style="width:100%" rows="15" required="" id="id_mitigation"></textarea>
+                                                    </div>
+                                                    <span class="text-error" style="color: rgb(255, 0, 0);"></span>
+                                                </div>
+                                            {% elif field.name == 'content_type_ids' %}
+                                                <div class="form-group col-6" style="margin-top: 10px;">
+                                                    <div class="card border-1 components-section" style="border-color: black">
+                                                        <div class="card-header">
+                                                            <div class="d-flex">
+                                                                <div class="me-auto">
+                                                                    <h1 class="h6">Content Type</h1>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="card-body">
+                                                            <div class="row align-items-center" >
+                                                                <div id="cmessagediv" class="row mb-4" style="display:none">
+                                                                    <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-left: 0px;margin-right: 0px">
+                                                                        <span id="cmessage"></span>
+                                                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                                                    </div>
+                                                                </div>
+                                                                <div id="ct-form" class="form-group col-10">
+                                                                    <div class="form-group col-12">
+                                                                        <div class="input-group">
+                                                                            <input type="text" name="name" maxlength="100" class="form-control" required id="id_name" placeholder="Example: phishing_url">
+                                                                        </div>
+                                                                        <span class="text-error" style="color: rgb(255, 0, 0);"></span>
+                                                                    </div>
+                                                                    <div class="form-group col-12">
+                                                                        <div class="input-group">
+                                                                            <input type="text" name="form_name" maxlength="100" class="form-control" required id="id_form_name" placeholder="Example: Phishing URL">
+                                                                        </div>
+                                                                        <span class="text-error" style="color: rgb(255, 0, 0);"></span>
+                                                                    </div>
+                                                                    <div class="form-group col-12">
+                                                                        {#                                                                        <label class="col-12">Content Type</label>#}
+                                                                        {#                                                                    <input type="text" name="type" placeholder="String" class="form-control" id="id_type">#}
+                                                                        <select name="type" id="id_type" class="form-control">
+                                                                            <option value="String">String</option>
+                                                                            <option value="Date">Date</option>
+                                                                            <option value="File">File</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group col-2">
+                                                                    <i id="ct_add" class="ion ion-chevron-right" style="font-size: 60px; color: #6C7AE0" data-toggle="tooltip" title="Add Content Type" data-bs-original-title="Add Content Type" aria-label="Add Content Type"></i>
+                                                                    {#                                                                    <input type="submit" id="cbtn" class="btn btn-primary btn-xs" value="Add Content Type" />#}
+                                                                </div>
+                                                            </div>
+                                                            {#                                        </form>#}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="roundedborder" style="margin-top: 10px; width: 48%; height: 380px; overflow-y: scroll;">
+                                                    <div class="form-group col-12">
+                                                        <label class="col-12">{{ field.label }}</label>
+                                                        <span class="text-error" style="color: rgb(255, 0, 0);"></span>
+                                                        <div class="input-group">
+                                                            {{ field }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            {% elif field.name == 'license_type_ids' %}
+                                                <div class="form-group col-5 roundedborder" style="margin-left: 9px; margin-top: 27px; border: 1px solid #D1D5DB; background-color: #F8F6FF">
+                                                    <label class="col-12">{{ field.label }}</label>
+                                                    <span class="text-error" style="color: rgb(255, 0, 0);"></span>
+                                                    <div class="input-group">
+                                                        {{ field }}
+                                                    </div>
+                                                </div>
+                                            {% else %}
+                                                <div class="form-group col-6">
+                                                    <label class="col-12">{{ field.label }}</label>
+                                                    <div class="input-group">
+                                                        {{ field }}
+                                                    </div>
+                                                    <span class="text-error" style="color: rgb(255, 0, 0);"></span>
+                                                </div>
+                                            {% endif %}
+                                        {% endfor %}
+                                        <div style="width:100%">
+                                            <div style="margin: 0 auto; text-align: center;">
+                                                <input id="createbtn" type="submit" class="btn btn-primary" value="Create Alarm Type" />
+                                                <input id="updatebtn" type="submit" class="btn btn-behance" value="Update Alarm Type" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card border-0 components-section">
+                    <div class="card-body">
+                        <div class="card border-1 components-section" style="border-color: black">
+                            <div class="card-body">
+                                <table id="example" class="table table-striped table-valign-middle" style="width:100%">
+                                    <thead class="tmt_thead">
+                                    <tr>
+                                        <th class="tmt_th">Detail</th>
+                                        <th class="tmt_th">CRUD</th>
+                                        <th class="tmt_th">Title</th>
+                                        <th class="tmt_th">Explanation</th>
+                                        <th class="tmt_th">Severity</th>
+                                        <th class="tmt_th">License Types</th>
+                                        <th class="tmt_th">Last Update</th>
+                                        <th class="tmt_th">Is Manuel</th>
+                                        <th class="tmt_th">Monitor</th>
+                                        <th class="tmt_th">Description</th>
+                                        <th class="tmt_th">Mitigation</th>
+                                        <th class="tmt_th">Content Types</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="myTable">
+                                    {% for alarmtype in page_obj %}
+                                        <tr id="id_{{alarmtype.id}}">
+                                            <td>detail</td>
+                                            <td id="crud_{{alarmtype.id}}">
+                                                <a href="#" class="upd" id="Button{{ alarmtype.id }}" itemid="{{ alarmtype.id }}">
+                                                    <i class="fas fa-pen" style="font-size: 18px; color: #6C7AE0" data-toggle="tooltip" title="Update"></i>
+                                                </a>
+                                                <a href="#" class="delBtn" id="Button{{ alarmtype.id }}" itemid="{{ alarmtype.id }}">
+                                                    <i class="fas fa-trash-alt" style="font-size: 18px; color: #ce0f0f" data-toggle="tooltip" title="Delete"></i>
+                                                </a>
+                                                {#                                                <button id="sil" class="sil">Dialog</button>#}
+                                            </td>
+                                            <td>{{alarmtype.title}}</td>
+                                            <td>{{alarmtype.explain}}</td>
+                                            <td>{{alarmtype.severity}}</td>
+                                            <td>{% get_licensetypes_str alarmtype.license_type_ids %}</td>
+                                            <td>{{alarmtype.update_date}}</td>
+                                            <td>{{alarmtype.is_manuel}}</td>
+                                            <td>{{alarmtype.monitor}}</td>
+                                            <td>{{alarmtype.description}}</td>
+                                            <td>{{alarmtype.mitigation}}</td>
+                                            <td>{{alarmtype.content_type_ids}}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div id="divBackground" style="position: fixed; z-index: 999; height: 100%; width: 100%; top: 0; left:0; background-color: Black; filter: alpha(opacity=60); opacity: 0.6; -moz-opacity: 0.8;display:none">
+                    </div>
+                </div>
+                <div id="dialog" style="display: none">
+                </div>
+                {#                <div id="dialogContent" title="Basic dialog">#}
+                {#                    <iframe src="{% url 'home:user_companies' id=1 %}"></iframe>#}
+                {#                </div>#}
+            </div>
+        </div>
+    </div>
+    {% block javascript %}
+        <script>
+            var table;
+            jQuery(function($) {
+                {#var opt = {#}
+                {#    autoOpen: false,#}
+                {#    modal: true,#}
+                {#    width: 550,#}
+                {#    height:650,#}
+                {#    title: 'Details'#}
+                {#;#}
+                {#$('.sil').click(function(){#}
+                {#    $("#dialogContent").data("csrfmiddlewaretoken", '{{ csrf_token }}').dialog( "open" );#}
+                {#);#}
+                {#$("#dialogContent").dialog({#}
+                {#    autoOpen: false,#}
+                {#    modal: true#}
+                {#);#}
+
+                $("#ct_add").click(function (e) {
+                    e.stopImmediatePropagation()
+                    e.preventDefault();
+                    let name = $("#id_name").val();
+                    let val = 'This field is required.';
+                    let is_valid = true;
+                    if (name == '') {
+                        let $input = $("#id_name");
+                        let span1 = $input.parent().parent().find(".text-error");
+                        span1.css("color", "red");
+                        span1.text(val);
+                        is_valid = false;
+                    }
+                    let form_name = $("#id_form_name").val()
+                    if (form_name == '') {
+                        let $input = $("#id_form_name");
+                        let span1 = $input.parent().parent().find(".text-error");
+                        span1.css("color", "red");
+                        span1.text(val);
+                        is_valid = false;
+                    }
+                    let type = $("#id_type").val()
+                    if (type == '') {
+                        let $input = $("#id_type");
+                        let span1 = $input.parent().parent().find(".text-error");
+                        span1.css("color", "red");
+                        span1.text(val);
+                        is_valid = false;
+                    }
+                    if (is_valid) {
+                        let url = "{% url 'analyst:content_type_create' %}"
+                        $.ajax({
+                            url: url,
+                            type: 'POST',
+                            headers: {
+                                'X-CSRFToken': '{{ csrf_token }}'
+                            },
+                            data: {
+                                name: name,
+                                form_name: form_name,
+                                type: type,
+                            },
+                            success: function (response) {
+                                let data = response['data'];
+                                let id = data['id'];
+                                let form_name = data['form_name'];
+                                let li = '<li><label for="id_content_type_ids_0"><input type="checkbox" name="content_type_ids"' +
+                                    'value="'+id+'" id="id_content_type_ids_0">&nbsp;'+form_name+'</label></li>';
+                                $("#id_content_type_ids").prepend(li);
+                                let message = response['message']
+                                $("#cmessage").text(message);
+                                $("#cmessagediv").show();
+                                console.log('')
+                            },
+                            error: function (response) {
+                                let data = response.responseJSON['data'];
+                                const obj = JSON.parse(data);
+                                let result = [];
+                                for(var i in obj)
+                                    result.push([i, obj[i][0]['message']]);
+                                if ($("#ct-form").next('span').length) $("input").nextAll('span').empty();
+                                for (let i in result) {
+                                    let key = result[i][0];
+                                    let val = result[i][1];
+                                    let $input = $("input[name='" + key + "']");
+                                    let span1 = $input.parent().parent().find(".text-error");
+                                    span1.css("color", "red");
+                                    span1.text(val);
+                                }
+                            },
+                        })
+                    }
+                });
+                $("#createbtn").click(function (e) {
+                    e.stopImmediatePropagation()
+                    e.preventDefault();
+                    var data = new FormData($("#alarmtypes-form")[0]);
+                    let url = "{% url 'analyst:alarmtypes' %}"
+                    $.ajax({
+                        url: url,
+                        type: 'POST',
+                        processData: false,
+                        contentType: false,
+                        headers: {
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        data: data,
+                        success: function (response) {
+                            let data = response['data'];
+                            let id = data['id'];
+                            data['update_date'] = new Date().toLocaleString();
+                            let form_name = data['form_name'];
+
+                            var crud1 = '<a href="#" class="upd" id="Button'+id+'" itemid="'+id+'">' +
+                                '<i class="fas fa-pen" style="font-size: 18px; color: #6C7AE0" data-toggle="tooltip" title="Update"></i>' +
+                                '</a>&nbsp;';
+                            var crud2 = '<a href="#" class="delBtn" id="Button'+id+'" itemid="'+id+'">' +
+                                '<i class="fas fa-trash-alt" style="font-size: 18px; color: #ce0f0f" data-toggle="tooltip" title="Delete"></i>' +
+                                '</a>';
+                            var crud = crud1 + crud2;
+                            var detail = '<td class="dt-control sorting_1"></td>';
+                            var objKeys = ["detail", "crud", "title", "explain", "severity",
+                                "license_type_ids", "update_date", "is_manuel", "monitor",
+                                "description", "mitigation", "content_type_ids"];
+                            var arr = get_visible_columns();
+                            var aa = arr.concat(objKeys);
+                            var bb = aa.filter((item,pos) => aa.indexOf(item) === pos);
+                            table.row.add([
+                                detail,
+                                crud,
+                                data['title'] ,
+                                data['explain'] ,
+                                data['severity'] ,
+                                data['license_type_ids'] ,
+                                data['update_date'] ,
+                                data['is_manuel'] ,
+                                data['monitor'] ,
+                                data['description'] ,
+                                data['mitigation'] ,
+                                data['content_type_ids']
+                            ]).draw()
+
+                            let message = response['message']
+                            $("#atmessage").text(message);
+                            $("#atmessagediv").show();
+                            $("#alarmtypes-form").trigger('reset');
+                            $("#form").hide();
+                            $("#addBtn").show();
+                            $("#hideBtn").hide();
+                            console.log('')
+                        },
+                        error: function (response) {
+                            let data = response.responseJSON['data'];
+                            const obj = JSON.parse(data);
+                            let result = [];
+                            for(var i in obj)
+                                result.push([i, obj[i][0]['message']]);
+                            if ($("#alarmtypes-form").next('span').length) $("input").nextAll('span').empty();
+                            for (let i in result) {
+                                let key = result[i][0];
+                                let val = result[i][1];
+                                let $input = $("#id_" + key);
+                                let span1 = $input.parent().parent().find(".text-error");
+                                span1.css("color", "red");
+                                span1.text(val);
+                            }
+                        },
+                    })
+                });
+                $("#updatebtn").click(function (e) {
+                    e.stopImmediatePropagation()
+                    e.preventDefault();
+                    var data = new FormData($("#alarmtypes-form")[0]);
+                    let url = "{% url 'analyst:alarmtypes' %}"
+                    var id = $("#id_id").val();
+                    $.ajax({
+                        url: url,
+                        type: 'POST',
+                        processData: false,
+                        contentType: false,
+                        headers: {
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        data: data,
+                        success: function (response) {
+                            let data = response['data'];
+                            var crud1 = '<a href="#" class="upd" id="Button'+id+'" itemid="'+id+'">' +
+                                '<i class="fas fa-pen" style="font-size: 18px; color: #6C7AE0" data-toggle="tooltip" title="Update"></i>' +
+                                '</a>&nbsp;';
+                            var crud2 = '<a href="#" class="delBtn" id="Button'+id+'" itemid="'+id+'">' +
+                                '<i class="fas fa-trash-alt" style="font-size: 18px; color: #ce0f0f" data-toggle="tooltip" title="Delete"></i>' +
+                                '</a>';
+                            var crud = crud1 + crud2;
+                            var short = '<span data-toggle="tooltip" title="Vulnerable SSL Version Discovered" onclick="showMore(this, 13,2)">Vulnerable SS...</span>'
+                            {#var detail = '<td class="dt-control sorting_1"></td>';#}
+                            var objKeys = ["detail", "crud", "title", "explain", "severity",
+                                "license_type_ids", "update_date", "is_manuel", "monitor",
+                                "description", "mitigation", "content_type_ids"];
+                            var arr = get_visible_columns()
+                            var aa = arr.concat(objKeys)
+                            var bb = aa.filter((item,pos) => aa.indexOf(item) === pos)
+                            $('#id_' + id + ' td').each(function(i) {
+                                if (bb[i] == 'crud') {
+                                    $('#crud_' + id).html(crud)
+                                } else {
+                                    if (bb[i] == 'title' || bb[i] == 'explain') {
+                                        if (data[objKeys[i]] != undefined && data[objKeys[i]] != 'undefined' && data[objKeys[i]].length > 15) {
+                                            let ids = $(this)[0]['_DT_CellIndex'];
+                                            let rowId = ids.row;
+                                            let colId = ids.column;
+                                            let short = '<span data-toggle="tooltip" title="' + data[objKeys[i]] + '" onclick="showMore(this, ' + rowId + ', ' + colId + ',\'' + data[objKeys[i]] + '\')">' + data[objKeys[i]].substr(0, 13) + '...</span>';
+                                            $(this).html(short);
+                                        } else {
+                                            $(this).text(data[objKeys[i]]);
+                                        }
+                                    } else if (bb[i] == 'license_type_ids') {
+                                        let lt = data[objKeys[i]];
+                                        let licensetypes = "{% get_licensetypes %}";
+                                        licensetypesarr = licensetypes.split(',');
+                                        if (lt != undefined && lt.length > 0) {
+                                            let ltstr = "";
+                                            for (i in lt) {
+                                                ltstr += licensetypesarr[lt[i]-1] + ",";
+                                            }
+                                            $(this).text(ltstr);
+                                        }
+                                    } else {
+                                        $(this).text(data[objKeys[i]]);
+                                    }
+                                }
+                            });
+                            var message = response['message']
+                            {#alert(message)#}
+                            $("#atmessage").text(message);
+                            $("#atmessagediv").show();
+                            $("#alarmtypes-form").trigger('reset');
+                            $("#form").hide();
+                            $("#addBtn").show();
+                            $("#hideBtn").hide();
+                            console.log('')
+                        },
+                        error: function (response) {
+                            let data = response.responseJSON['data'];
+                            const obj = JSON.parse(data);
+                            let result = [];
+                            for(var i in obj)
+                                result.push([i, obj[i][0]['message']]);
+                            if ($("#alarmtypes-form").next('span').length) $("input").nextAll('span').empty();
+                            for (let i in result) {
+                                let key = result[i][0];
+                                let val = result[i][1];
+                                let $input = $("#id_" + key);
+                                let span1 = $input.parent().parent().find(".text-error");
+                                span1.css("color", "red");
+                                span1.text(val);
+                            }
+                        },
+                    })
+                });
+                $(document).on('click', '.upd', function(e) {
+                    e.stopImmediatePropagation()
+                    e.preventDefault();
+                    var id = $(this).attr('itemid')
+                    url = "{% url 'analyst:alarmtypes' %}";
+                    $.ajax({
+                        type: 'GET',
+                        url: url,
+                        data: {"id": id, "csrfmiddlewaretoken": '{{ csrf_token }}'},
+                        success: function (response) {
+                            $("#addBtn").hide();
+                            $("#form").show();
+                            $("#hideBtn").show();
+                            $("#createbtn").hide();
+                            $("#updatebtn").show();
+                            $("#alarmtypes-form").trigger('reset');
+                            $("#id_title").focus();
+                            var form = JSON.parse(response["data"]);
+                            var fields = form[0]["fields"];
+                            var pk = form[0]["pk"];
+                            $('#id_title').val(fields["title"]);
+                            $('#id_id').val(pk);
+                            $("#id_explain").val(fields["explain"]);
+                            $("#id_severity").val(fields["severity"]);
+                            $("#id_description").val(fields["description"]);
+                            $("#id_mitigation").val(fields["mitigation"]);
+                            $("#id_is_manuel").val(fields["is_manuel"]);
+                            $("#id_monitor").val(fields["monitor"]);
+                            let content_type_ids = fields["content_type_ids"];
+                            let license_type_ids = fields["license_type_ids"];
+                            $("#id_content_type_ids").find('li label :checkbox').each(function(i){
+                                let id = $(this).val();
+                                if (content_type_ids.indexOf(id) > -1)
+                                    $(this).prop("checked", true);
+                            });
+                            $("#id_license_type_ids").find('li label :checkbox').each(function(i){
+                                let id = $(this).val();
+                                if (license_type_ids.indexOf(id) > -1)
+                                    $(this).prop("checked", true);
+                            });
+                            $("#id_severity").val(fields["severity"]).change();
+                        },
+                        error: function (response) {
+                            console.log(response)
+                            alert("error")
+                        }
+                    });
+                });
+                $(document).on('click', '.delBtn', function(e) {
+                    e.stopImmediatePropagation()
+                    e.preventDefault();
+                    if (confirm('Are you sure to delete?')) {
+                        let id = $(this).attr('itemid')
+                        {#url = "/home/getcompany/" + id + "/"#}
+                        url = "{% url 'analyst:alarmtype_delete' %}";
+                        $.ajax({
+                            type: 'GET',
+                            url: url,
+                            data: {"id": id, "csrfmiddlewaretoken": '{{ csrf_token }}'},
+                            success: function (response) {
+                                let message = response['message']
+                                var aa = $("#id_" + id);
+                                table.row(aa).remove().draw();
+                                $("#atmessage").text(message);
+                                $("#atmessagediv").show();
+                                console.log('')
+                            },
+                            error: function (response) {
+                                console.log(response)
+                                alert("error")
+                            }
+                        });
+                    };
+                });
+                $( "#id_severity" ).autocomplete({
+                    source: {{ severities|safe }},
+                    scroll: false,
+                    minLength:0
+                }).bind('focus', function(){ $(this).autocomplete("search"); } );
+                $("#addBtn").click(function(e) {
+                    e.preventDefault();
+                    $("#form").show();
+                    $("#hideBtn").show();
+                    $("#createbtn").show();
+                    $("#updatebtn").hide();
+                    $(this).hide();
+                });
+                $("#hideBtn").click(function(e) {
+                    e.preventDefault();
+                    $("#form span").text("");
+                    $("#form").hide();
+                    $("#alarmtypes-form").trigger('reset');
+                    $("#addBtn").show();
+                    $("#createbtn").hide();
+                    $("#updatebtn").show();
+                    {#$('span').text('');#}
+                    $(this).hide();
+                });
+
+                table = $('#example').DataTable( {
+                    lengthMenu: [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
+                    stateSave: true,
+                    {#stateDuration: -1,#}
+                    scrollX: true,
+                    {#paging: true,#}
+                    {#searching: false,#}
+                    {#"scrollY": "200px",#}
+                    {#"paging": false,#}
+                    dom: 'Blfrtip',
+                    columns: [
+                        {
+                            className:      'dt-control',
+                            orderable:      false,
+                            data:           null,
+                            defaultContent: ''
+                        },
+                        { name: "crud" },
+                        { name: "title" },
+                        { name: "explain" },
+                        { name: "severity" },
+                        { name: "license_type_ids" },
+                        { name: "update_date" },
+                        { name: "is_manuel" },
+                        { name: "monitor" },
+                        { name: "description" },
+                        { name: "mitigation" },
+                        { name: "content_type_ids" },
+                    ],
+                    columnDefs: [
+                        {
+                            targets: [ 0,1,11 ],
+                            className: 'noVis'
+                        },
+                        {
+                            targets: [ 11 ],
+                            visible: false,
+                            searchable: false
+                        },
+                        { targets: [2,3],
+                            render: function ( data, type, row, meta ) {
+                                if (type === 'display') {
+                                    if ( data != "undefined" && data != undefined && data.length > 15)  {
+                                        return '<span data-toggle="tooltip" title="'+data+'" onclick="showMore(this, ' + meta.row + ',' + meta.col + ',\'' + data +'\')">' + data.substr( 0, 13 ) + '...</span>';
+                                        {#'<button class="more-button" data-toggle="tooltip" title="'+data+'" onclick="showMore(this, ' + meta.row + ',' + meta.col + ')">...</button>' ;#}
+                                    } else {
+                                        return data;
+                                    }
+                                } else {
+                                    return data;
+                                }
+                            }
+                        },
+                    ],
+                    buttons: [
+                        {
+                            extend: 'colvis',
+                            columns: ':not(.noVis)'
+                        }
+                    ],
+                });
+                $('#example tbody').on('click', 'td.dt-control', function () {
+                    var tr = $(this).closest('tr');
+                    var row = table.row( tr );
+                    if ( row.child.isShown() ) {
+                        // This row is already open - close it
+                        row.child.hide();
+                        tr.removeClass('shown');
+                    }
+                    else {
+                        // Open this row
+                        row.child( format(row.data()) ).show();
+                        tr.addClass('shown');
+                    }
+                } );
+            });
+            function get_visible_columns() {
+                var all_columns = table.settings().init().columns;
+                var visible_columns = [];
+                for (var i in all_columns) {
+                    if (table.column(all_columns[i].name + ':name').visible()) {
+                        visible_columns.push(all_columns[i].name);
+                    }
+                }
+                {#alert(visible_columns)#}
+                return visible_columns
+                {#return visible_columns.join(', ');#}
+            }
+            function showMore(node, rowId, colId, fullText) {
+                var rowData = $('#example').DataTable().rows( rowId ).data().toArray()[0];
+                {#var fullText = rowData[colId];#}
+                $(node.parentNode).text( fullText );
+            }
+            function format ( d ) {
+                // `d` is the original data object for the row
+                {#1: "<a href=\"#\" class=\"upd\" id=\"Button22\" itemid=\"22\">\n                                                    <i class=\"fas fa-pen\" style=\"font-size: 18px; color: #6C7AE0\" data-toggle=\"tooltip\" title=\"Update\"></i>\n                                                </a>\n                                                <a href=\"#\" class=\"delBtn\" id=\"Button22\" itemid=\"22\">\n                                                    <i class=\"fas fa-trash-alt\" style=\"font-size: 18px; color: #ce0f0f\" data-toggle=\"tooltip\" title=\"Delete\"></i>\n                                                </a>"#}
+                {#2: "aaaaaaaaaa"#}
+                {#3: "wwwwwwwwww"#}
+                {#4: "High"#}
+                {#5: "['3']"#}
+                {#6: "Dec. 12, 2021, 5:57 a.m."#}
+                {#7: "True"#}
+                {#8: "True"#}
+                {#9: "zscxzc"#}
+                {#10: "xzcxzc"#}
+                {#11: "['70']"#}
+                {#DT_RowId: "id_22"#}
+                var contentids = d[11];
+                // GET AJAX request
+                let contents = '';
+                $.ajax({
+                    async: false,
+                    type: 'GET',
+                    url: "{% url 'analyst:get_contents' %}",
+                    data: {"contentids": contentids},
+                    success: function (response) {
+                        contents = response['data'];
+                        {#alert('success' + contents)#}
+                        // if not valid user, alert the user
+                        {#if(response["valid"]){#}
+                        {#    alert("You cannot create a friend with same nick name");#}
+                        {#    var nickName = $("#id_nick_name");#}
+                        {#    nickName.val("")#}
+                        {#    nickName.focus()#}
+                        {##}
+                    },
+                    error: function (response) {
+                        alert('error')
+                    }
+                });
+                return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
+                    '<tr>'+
+                    '<td>Description:</td>'+
+                    '<td>'+d[9]+'</td>'+
+                    '</tr>'+
+                    '<tr>'+
+                    '<td>Mitigation:</td>'+
+                    '<td>'+d[10]+'</td>'+
+                    '</tr>'+
+                    '<tr>'+
+                    '<td>Contents:</td>'+
+                    '<td>'+contents+'</td>'+
+                    '</tr>'+
+                    '<tr>'+
+                    '<td>Extra info:</td>'+
+                    '<td>And any further details here (images etc)...</td>'+
+                    '</tr>'+
+                    '</table>';
+            }
+        </script>
+    {% endblock javascript %}
+{% endblock content %}

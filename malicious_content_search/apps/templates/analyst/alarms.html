@@ -1,0 +1,1172 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% load temptags %}
+{% block content %}
+
+    <div id="divalarms" class="row">
+        <div class="col-12 mb-4">
+            <div class="card border-0 shadow components-section">
+                <div class="card-header">
+                    <div class="d-flex">
+                        <div class="me-auto">
+                            <h1 class="h6">Alarms</h1>
+                        </div>
+                        <div id="amessagediv" class="row mb-4" style="display:none">
+                            <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-left: 0px;margin-right: 0px">
+                                <span id="amessage"></span>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        </div>
+                        <div class="ms-auto">
+                            <a href="#" id="addBtn">
+                                <i class="fa fa-plus" style="font-size: 18px; color: green" data-toggle="tooltip" title="Create Alarm"></i>
+                            </a>
+                            <a href="#" id="hideBtn" style="display:none">
+                                <i class="fa fa-minus" style="font-size: 18px; color: green" data-toggle="tooltip" title="Create Alarm"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div id="form" style="display:none">
+                    <div class="card-body">
+                        <div class="card border-1 components-section" style="border-color: black">
+                            <div class="card-body">
+                                <form id="alarms-form" method="post" action="" enctype="multipart/form-data" novalidate>
+                                    <div class="row">
+                                        <div class="input-group">
+                                            <input type="hidden" id="id_id" name="id" value="">
+                                        </div>
+                                        {% csrf_token %}
+                                        {% for field in form %}
+                                            {% if field.name == 'description' %}
+                                                <div class="form-group col-12">
+                                                    <label class="col-12">{{ field.label }}</label>
+                                                    <div class="input-group col-12">
+                                                        {#                                                        {{ field|safe }}#}
+                                                        {#                                                        {{ form.media }}#}
+                                                        <textarea class="form-control roundedborder" name="description" style="width:100%" rows="15" required="" id="id_description"></textarea>
+                                                    </div>
+                                                    <span class="text-error" style="color: rgb(255, 0, 0);"></span>
+                                                </div>
+                                            {% elif field.name == 'mitigation' %}
+                                                <div class="form-group col-12">
+                                                    <label class="col-12">{{ field.label }}</label>
+                                                    <div class="input-group col-12">
+                                                        {#                                                        {{ field|safe }}#}
+                                                        {#                                                        {{ form.media }}#}
+                                                        <textarea class="form-control roundedborder" name="mitigation" style="width:100%" rows="15" required="" id="id_mitigation"></textarea>
+                                                    </div>
+                                                    <span class="text-error" style="color: rgb(255, 0, 0);"></span>
+                                                </div>
+                                            {% elif field.name == 'source' %}
+                                                <div class="form-group col-12">
+                                                    <label class="col-12">{{ field.label }}</label>
+                                                    <div class="input-group col-12">
+                                                        <textarea class="form-control roundedborder" name="source" style="width:100%" rows="15" required="" id="id_source"></textarea>
+                                                    </div>
+                                                    <span class="text-error" style="color: rgb(255, 0, 0);"></span>
+                                                </div>
+                                            {% elif field.name == 'content_ids' %}
+                                                {{ field.as_hidden }}
+                                            {% elif field.name == 'companies' %}
+                                                <div class="form-group col-12 roundedborder" style="margin-left: 7px; margin-right: 0%; margin-top: 20px; border: 1px solid #D1D5DB; background-color: #F8F6FF; width: 98%; height: 350px; overflow-y: scroll;">
+                                                    <h6><label class="col-12">{{ field.label }}</label></h6>
+                                                    <span class="text-error" style="color: rgb(255, 0, 0);"></span>
+                                                    <h6><li>
+                                                        <label for="id_companies_00"><input type="checkbox" name="companies" value="" id="id_companies_00">
+                                                            Select all companies</label>
+                                                    </li>
+                                                    </h6>
+                                                    <div class="input-group">
+                                                        {{ field }}
+                                                    </div>
+                                                </div>
+                                            {% else %}
+                                                <div class="form-group col-6">
+                                                    <label class="col-12">{{ field.label }}</label>
+                                                    <div class="input-group">
+                                                        {{ field }}
+                                                    </div>
+                                                    <span class="text-error" style="color: rgb(255, 0, 0);"></span>
+                                                </div>
+                                            {% endif %}
+                                        {% endfor %}
+                                        <div class="card border-1 components-section" style="margin-top: 10px; margin-left: 11px; margin-right: 7px; width: 98%; border-color: black">
+                                            <div class="card-header">
+                                                Contents
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="bd-example" style="overflow-x: scroll;white-space: nowrap;">
+                                                    <ul class="nav nav-tabs mb-3" id="myTab" role="tablist">
+                                                        {% for i in ct_range %}
+                                                            {% if i == 1 %}
+                                                                <li class="nav-item" role="presentation">
+                                                                    <button class="nav-link active" id="content-{{ i }}-tab" data-bs-toggle="tab" data-bs-target="#content-{{ i }}" type="button" role="tab" aria-controls="content-{{ i }}" aria-selected="false">-{{ i }}-</button>
+                                                                </li>
+                                                            {% else %}
+                                                                <li class="nav-item" role="presentation">
+                                                                    <button class="nav-link" id="content-{{ i }}-tab" data-bs-toggle="tab" data-bs-target="#content-{{ i }}" type="button" role="tab" aria-controls="content-{{ i }}" aria-selected="false">-{{ i }}-</button>
+                                                                </li>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </ul>
+                                                    <div class="tab-content" id="myTabContent">
+                                                        {% for i in ct_range %}
+                                                            {% if i == 1 %}
+                                                                <div class="tab-pane fade active show" id="content-{{ i }}" role="tabpanel" aria-labelledby="content-{{ i }}-tab">
+                                                                </div>
+                                                            {% else %}
+                                                                <div class="tab-pane fade" id="content-{{ i }}" role="tabpanel" aria-labelledby="content-{{ i }}-tab">
+                                                                </div>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>
+                                                <input type="hidden" id="content_type_ids" value="">
+                                                <input type="hidden" id="content_type_names" value="">
+                                                <input type="hidden" id="content_type_count" value="{{ ct_count }}">
+                                            </div>
+                                        </div>
+                                        <div style="width:100%">
+                                            <div style="margin: 0 auto; text-align: center;">
+                                                <input id="createbtn" type="submit" class="btn btn-primary" value="Create Alarm" />
+                                                <input id="updatebtn" type="submit" class="btn btn-behance" value="Update Alarm" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card border-0 components-section">
+                    <div class="card-body">
+                        <div class="card border-1 components-section" style="border-color: black">
+                            <div class="card-body">
+                                <table id="example" class="table table-striped table-valign-middle" style="width:100%">
+                                    <thead class="tmt_thead">
+                                    <tr>
+                                        <th class="tmt_th">Detail</th>
+                                        <th class="tmt_th">CRUD</th>
+                                        <th class="tmt_th">Title</th>
+                                        <th class="tmt_th">Severity</th>
+                                        <th class="tmt_th">Last Update</th>
+                                        <th class="tmt_th">Is Manuel</th>
+                                        <th class="tmt_th">Description</th>
+                                        <th class="tmt_th">Mitigation</th>
+                                        <th class="tmt_th">Contents</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="myTable">
+                                    {% for alarm in page_obj %}
+                                        <tr id="id_{{alarmtype.id}}">
+                                            <td>detail</td>
+                                            <td id="crud_{{alarm.id}}">
+                                                <a href="#" class="upd" id="Button{{ alarm.id }}" itemid="{{ alarm.id }}">
+                                                    <i class="fas fa-pen" style="font-size: 18px; color: #6C7AE0" data-toggle="tooltip" title="Update"></i>
+                                                </a>
+                                                <a href="#" class="delBtn" id="Button{{ alarm.id }}" itemid="{{ alarm.id }}">
+                                                    <i class="fas fa-trash-alt" style="font-size: 18px; color: #ce0f0f" data-toggle="tooltip" title="Delete"></i>
+                                                </a>
+                                                <a href="#" class="modalBtn" id="Button{{ alarm.id }}" itemid="{{ alarm.id }}" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                                    <i class="fas fa-search" style="font-size: 18px; color: #ce0f0f" data-toggle="tooltip" title="Modal"></i>
+                                                </a>
+                                            </td>
+                                            <td>{{alarm.title}}</td>
+                                            <td>{{alarm.severity}}</td>
+                                            <td>{{alarm.update_date}}</td>
+                                            <td>{{alarm.is_manuel}}</td>
+                                            <td>{{alarm.description}}</td>
+                                            <td>{{alarm.mitigation}}</td>
+                                            <td>{{alarm.content_ids}}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div id="divBackground" style="position: fixed; z-index: 999; height: 100%; width: 100%; top: 0; left:0; background-color: Black; filter: alpha(opacity=60); opacity: 0.6; -moz-opacity: 0.8;display:none">
+                    </div>
+                </div>
+                <div id="dialog" style="display: none">
+                </div>
+                <div class="modal fade" id="exampleModalXl" tabindex="-1" aria-labelledby="exampleModalXlLabel" data-bs-backdrop="static" data-bs-keyboard="false" style="display: none;" aria-hidden="true">
+                    <div class="modal-dialog modal-xl">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title h4" id="exampleModalXlLabel"></h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row justify-content-center">
+                                    <div class="col-md-12">
+                                        <h1 style="text-align: center; background: #e4e2e2; ; color: #800000; font-family: Verdana, Geneva, Tahoma, sans-serif;">
+                                                <span style="font-weight: normal; font-size: 25pt"><b>UC</b><br>
+                                                <span style="font-weight: normal; font-size: 20pt"> Threat Intelligence Platform </span>
+                                                </span>
+                                        </h1>
+                                    </div>
+                                    <div class="col-md-12" style="text-align: center; padding-top: 10px">
+                                        <h2>
+                                            <span style="color:black; font-size: 16pt; font-family: Arial, Helvetica, sans-serif;" id="id_title_modal"></span>
+                                        </h2>
+                                    </div>
+                                    <div class="row" style="text-align: left; padding-top: 10px">
+                                        <div class="col-md-2">
+                                            <strong><span style="color: #000080;  font-family: Arial, Helvetica, sans-serif; font-size: 13pt; padding-left:5px; font-weight: bold;">MAIN TYPE</span></strong>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <strong>:</strong>
+                                        </div>
+                                        <div class="col-md-9">
+                                            <strong id="id_alarm_type_modal" style="font-weight: bold;"></strong>
+                                        </div>
+                                    </div>
+                                    <div class="row" style="text-align: left; padding-top: 10px">
+                                        <div class="col-md-2">
+                                            <strong><span style="color: #000080;  font-family: Arial, Helvetica, sans-serif; font-size: 13pt; padding-left:5px; font-weight: bold;">COMPANY</span></strong>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <strong>:</strong>
+                                        </div>
+                                        <div class="col-md-9">
+                                            <strong id="id_companies_modal" style="font-weight: bold;"></strong>
+                                        </div>
+                                    </div>
+                                    <div class="row" style="text-align: left; padding-top: 10px">
+                                        <div class="col-md-2">
+                                            <strong><span style="color: #000080;  font-family: Arial, Helvetica, sans-serif; font-size: 13pt; padding-left:5px; font-weight: bold;">SEVERITY</span></strong>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <strong>:</strong>
+                                        </div>
+                                        <div class="col-md-9">
+                                            <strong id="id_severity_modal" style="font-weight: bold;"></strong>
+                                        </div>
+                                    </div>
+                                    <div class="row" style="text-align: left; padding-top: 10px">
+                                        <div class="col-md-2">
+                                            <strong><span style="color: #000080;  font-family: Arial, Helvetica, sans-serif; font-size: 13pt; padding-left:5px; font-weight: bold;">ALARM CODE</span></strong>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <strong>:</strong>
+                                        </div>
+                                        <div class="col-md-9">
+                                            <strong id="id_id_modal" style="font-weight: bold;"></strong>
+                                        </div>
+                                    </div>
+                                    <div class="row" style="text-align: left; padding-top: 10px">
+                                        <div class="col-md-2">
+                                            <strong><span style="color: #000080;  font-family: Arial, Helvetica, sans-serif; font-size: 13pt; padding-left:5px; font-weight: bold;">DATE</span></strong>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <strong>:</strong>
+                                        </div>
+                                        <div class="col-md-9" style="font-weight: bold;">
+                                            <strong id="id_create_date_modal" style="font-weight: bold;"></strong>
+                                        </div>
+                                    </div>
+                                    <div class="row" style="text-align: left; padding-top: 10px">
+                                        <div class="col-md-2">
+                                            <strong><span style="color: #000080;  font-family: Arial, Helvetica, sans-serif; font-size: 13pt; padding-left:5px; font-weight: bold;">SOURCE</span></strong>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <strong>:</strong>
+                                        </div>
+                                        <div class="col-md-9" style="font-weight: bold;">
+                                            <strong id="id_source_modal"></strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <h3 style="text-align: center; background: #e4e2e2; ; color: #800000; font-family: Verdana, Geneva, Tahoma, sans-serif;">
+                                            <span style="color:#800000; font-size: 14pt; font-family: Arial, Helvetica, sans-serif;">DESCRIPTION</span>
+                                        </h3>
+                                    </div>
+                                    <div class="col-md-12" style="text-align: left;">
+                                        <strong id="id_description_modal"></strong>
+                                    </div>
+
+                                    <div id="contents_body">
+
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <h3 style="text-align: center; background: #e4e2e2; ; color: #800000; font-family: Verdana, Geneva, Tahoma, sans-serif;">
+                                            <span style="color:#800000; font-size: 14pt; font-family: Arial, Helvetica, sans-serif;">MITIGATION</span>
+                                        </h3>
+                                    </div>
+                                    <div class="col-md-12" style="text-align: left;">
+                                        <strong id="id_mitigation_modal"></strong>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <label>
+                                    <span>
+                                        <input type="checkbox" value="">
+                                        <span></span>
+                                    </span>
+                                        <span>Send to all subscribed users</span>
+                                    </label>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-danger">Reject</button>
+                                    <button type="button" class="btn btn-success">Accept</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% block script %}
+        <script>
+            var table;
+            jQuery(function($) {
+                $(".modalBtn").click(function(e) {
+                    e.stopImmediatePropagation()
+                    e.preventDefault();
+                    {#let content_type_count = $("#content_type_count").val();#}
+                    var id = $(this).attr('itemid')
+                    url = "{% url 'analyst:get_alarm' %}";
+                    $.ajax({
+                        type: 'GET',
+                        url: url,
+                        data: {"id": id, "csrfmiddlewaretoken": '{{ csrf_token }}'},
+                        success: function (response) {
+                            alert('success');
+                            var form = JSON.parse(response["data"]);
+                            var contents = response["contents"];
+                            var ct_names = response["ct_names"];
+                            {#$("#content_type_names").val(ct_names)#}
+                            var ct_form_names = response["ct_form_names"];
+                            var ct_types = response["ct_types"];
+                            let ctypes = JSON.parse(response["content_types"]);
+                            var fields = form[0]["fields"];
+                            var pk = form[0]["pk"];
+                            $('#id_title_modal').text(fields["title"]);
+                            $('#id_id_modal').text(pk);
+                            $("#id_severity_modal").text(fields["severity"]);
+                            $("#id_alarm_type_modal").text(fields["alarm_type_id"]);
+                            $("#id_description_modal").text(fields["description"]);
+                            $("#id_source_modal").text(fields["source"]);
+                            $("#id_mitigation_modal").text(fields["mitigation"]);
+                            let create_date = fields["create_date"].replace('T', ' ').replace(/\..+/, '').replace('Z', '');
+                            $("#id_create_date_modal").text(create_date);
+                            $("#id_companies_modal").text(fields["companies"]);
+                            let content_html = '';
+                            if (contents.length > 0) {
+                                for (let i = 0; i < contents.length; i++) {
+                                    for (let j = 0; j < ct_names.length; j++) {
+                                        if (ct_types[j] == 'String') {
+                                            {#let name = ctypes[i]['name'] + "_" + j;#}
+                                            {#let form_name = ctypes[i]['form_name'];#}
+                                            let name = ct_names[j] + "_" + (i + 1);
+                                            let form_name = ct_form_names[j];
+                                            let value = contents[i][j];
+                                            let content = '<div class="row" style="text-align: left; padding-top: 10px">' +
+                                                '<div class="col-md-2">' +
+                                                '<span style="font-weight: normal; font-family: arial, helvetica, sans-serif; padding-left:5px; font-size: 10pt; font-weight: bold;">' + form_name + '</span>' +
+                                                '</div>' +
+                                                '<div class="col-md-1">' +
+                                                '<strong>:</strong>' +
+                                                '</div>' +
+                                                '<div class="col-md-9" style="font-weight: bold;">' +
+                                                '<span style="font-weight: normal; font-family: arial, helvetica, sans-serif; font-size: 10pt;">' + value + '</span>' +
+                                                '</div>' +
+                                                '</div>';
+                                            content_html += content;
+                                            {#$("#id_" + name).val(value)#}
+                                        } else if (ct_types[j] == 'Date') {
+                                            let name = ct_names[j] + "_" + (i + 1);
+                                            let form_name = ct_form_names[j];
+                                            let value = contents[i][j].replace(/\..+/, '').replace('Z', '');
+                                            {#value = "2021-12-18T08:33";#}
+                                            let content = '<div class="row" style="text-align: left; padding-top: 10px">' +
+                                                '<div class="col-md-2">' +
+                                                '<span style="font-weight: normal; font-family: arial, helvetica, sans-serif; padding-left:5px; font-size: 10pt; font-weight: bold;">' + form_name + '</span>' +
+                                                '</div>' +
+                                                '<div class="col-md-1">' +
+                                                '<strong>:</strong>' +
+                                                '</div>' +
+                                                '<div class="col-md-9" style="font-weight: bold;">' +
+                                                '<span style="font-weight: normal; font-family: arial, helvetica, sans-serif; font-size: 10pt;">' + value + '</span>' +
+                                                '</div>' +
+                                                '</div>';
+                                            content_html += content;
+                                            {#$("#id_" + name).val(value)#}
+                                        } else if (ct_types[j] == 'File') {
+                                            let name = ct_names[j] + "_" + (i + 1);
+                                            let form_name = ct_form_names[j];
+                                            let value = contents[i][j];
+                                            {#$("#id_" + name).attr("src", value);#}
+                                            let content = '<div class="row" style="text-align: left; padding-top: 10px">' +
+                                                '<div class="col-md-2">' +
+                                                '<span style="font-weight: normal; font-family: arial, helvetica, sans-serif; padding-left:5px; font-size: 10pt; font-weight: bold;">' + form_name + '</span>' +
+                                                '</div>' +
+                                                '<div class="col-md-1">' +
+                                                '<strong>:</strong>' +
+                                                '</div>' +
+                                                '<div class="col-md-9" style="font-weight: bold;">' +
+                                                '<img src="/apps/media/' + value + '" style="width: 50px; height: 50px;">' +
+                                                '</div>' +
+                                                '</div>';
+                                            content_html += content;
+                                            {#$("#id_" + name).attr("src", value);#}
+                                            {#$("#id_" + name + "1").attr("src",'/apps/media/'+value);#}
+                                        };
+                                    };
+                                };
+                                $("#contents_body").html(content_html);
+                            };
+                            $("#exampleModalXl").modal('show');
+                            console.log('')
+                        },
+                        error: function (response) {
+                            alert('error');
+                            let data = response.responseJSON['data'];
+                            const obj = JSON.parse(data);
+                            let result = [];
+                            for(var i in obj)
+                                result.push([i, obj[i][0]['message']]);
+                            {#if ($("#alarmtypes-form").next('span').length) $("input").nextAll('span').empty();#}
+                            $("#menu-form").find('span').each(function(){
+                                $(this).empty();
+                            });
+                            for (let i in result) {
+                                let key = result[i][0];
+                                let val = result[i][1];
+                                let $input = $("#id_" + key);
+                                let span1 = $input.parent().parent().find(".text-error");
+                                span1.css("color", "red");
+                                span1.text(val);
+                            }
+                        },
+                    });
+                });
+                $("#createbtn").click(function (e) {
+                    e.stopImmediatePropagation();
+                    e.preventDefault();
+                    var data = new FormData($("#alarms-form")[0]);
+                    data.append("content_type_ids", $("#content_type_ids").val());
+                    let ctnames = $("#content_type_names").val();
+                    data.append("content_type_names", ctnames);
+                    let ct_count = $("#content_type_count").val();
+                    data.append("content_type_count", ct_count);
+                    {#companies = $("#id_companies");#}
+                    {#let company_ids = [];#}
+                    {#$('ul#id_companies :checkbox').each(function () {#}
+                    {#        if ($(this).is(":checked")) {#}
+                    {#            company_ids.push($(this).val())#}
+                    {#        };#}
+                    {#    });#}
+                    {#data.append("company_ids", company_ids);#}
+                    let url = "{% url 'analyst:alarms' %}";
+                    $.ajax({
+                        url: url,
+                        type: 'POST',
+                        processData: false,
+                        contentType: false,
+                        headers: {
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        data: data,
+                        success: function (response) {
+                            {#alert('success');#}
+                            let data = response['data'];
+                            let id = data['id'];
+                            data['update_date'] = new Date().toLocaleString();
+                            {#let form_name = data['form_name'];#}
+
+                            let crud1 = '<a href="#" class="upd" id="Button'+id+'" itemid="'+id+'">' +
+                                '<i class="fas fa-pen" style="font-size: 18px; color: #6C7AE0" data-toggle="tooltip" title="Update"></i>' +
+                                '</a>&nbsp;';
+                            let crud2 = '<a href="#" class="delBtn" id="Button'+id+'" itemid="'+id+'">' +
+                                '<i class="fas fa-trash-alt" style="font-size: 18px; color: #ce0f0f" data-toggle="tooltip" title="Delete"></i>' +
+                                '</a>&nbsp;';
+                            let crud3 = '<a href="#" class="modalBtn" id="Button'+id+'" itemid="'+id+'" data-bs-toggle="modal" data-bs-target="#exampleModal">' +
+                                '<i class="fas fa-search" style="font-size: 18px; color: #ce0f0f" data-toggle="tooltip" title="Modal"></i>' +
+                                '</a>'
+
+                            let crud = crud1 + crud2 + crud3;
+                            let detail = '<td class="dt-control sorting_1"></td>';
+                            let objKeys = ["detail", "crud", "title", "severity",
+                                "update_date", "is_manuel", "description",
+                                "mitigation", "content_ids"];
+                            let arr = get_visible_columns();
+                            let aa = arr.concat(objKeys);
+                            let bb = aa.filter((item,pos) => aa.indexOf(item) === pos);
+                            table.row.add([
+                                detail,
+                                crud,
+                                data['title'] ,
+                                data['severity'] ,
+                                data['update_date'] ,
+                                data['is_manuel'] ,
+                                data['description'] ,
+                                data['mitigation'] ,
+                                data['content_ids']
+                            ]).draw()
+
+                            let message = response['message']
+                            $("#amessage").text(message);
+                            $("#amessagediv").show();
+                            $("#alarms-form").trigger('reset');
+                            $("#form").hide();
+                            $("#addBtn").show();
+                            $("#hideBtn").hide();
+                            console.log('');
+                        },
+                        error: function (response) {
+                            alert('error');
+                            let data = response.responseJSON['data'];
+                            const obj = JSON.parse(data);
+                            let result = [];
+                            for(var i in obj)
+                                result.push([i, obj[i][0]['message']]);
+                            {#if ($("#alarmtypes-form").next('span').length) $("input").nextAll('span').empty();#}
+                            $("#menu-form").find('span').each(function(){
+                                $(this).empty();
+                            });
+                            for (let i in result) {
+                                let key = result[i][0];
+                                let val = result[i][1];
+                                let $input = $("#id_" + key);
+                                let span1 = $input.parent().parent().find(".text-error");
+                                span1.css("color", "red");
+                                span1.text(val);
+                            }
+                        },
+                    })
+                });
+                $("#updatebtn").click(function (e) {
+                    e.stopImmediatePropagation()
+                    e.preventDefault();
+                    let data = new FormData($("#alarms-form")[0]);
+                    let url = "{% url 'analyst:alarms' %}"
+                    let id = $("#id_id").val();
+                    let dd = $("#id_create_date_1").val();
+                    let ctids = $("#content_type_ids").val();
+                    data.append("content_type_ids", ctids);
+                    let ctnames = $("#content_type_names").val();
+                    data.append("content_type_names", ctnames);
+                    let ct_count = $("#content_type_count").val();
+                    data.append("content_type_count", ct_count);
+                    $.ajax({
+                        url: url,
+                        type: 'POST',
+                        processData: false,
+                        contentType: false,
+                        headers: {
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        data: data,
+                        success: function (response) {
+                            {#alert('success');#}
+                            let data = response['data'];
+                            var crud1 = '<a href="#" class="upd" id="Button'+id+'" itemid="'+id+'">' +
+                                '<i class="fas fa-pen" style="font-size: 18px; color: #6C7AE0" data-toggle="tooltip" title="Update"></i>' +
+                                '</a>&nbsp;';
+                            var crud2 = '<a href="#" class="delBtn" id="Button'+id+'" itemid="'+id+'">' +
+                                '<i class="fas fa-trash-alt" style="font-size: 18px; color: #ce0f0f" data-toggle="tooltip" title="Delete"></i>' +
+                                '</a>';
+                            var crud = crud1 + crud2;
+                            var short = '<span data-toggle="tooltip" title="Vulnerable SSL Version Discovered" onclick="showMore(this, 13,2)">Vulnerable SS...</span>'
+                            {#var detail = '<td class="dt-control sorting_1"></td>';#}
+                            var objKeys = ["detail", "crud", "title", "explain", "severity",
+                                "license_type_ids", "update_date", "is_manuel", "monitor",
+                                "description", "mitigation", "content_type_ids"];
+                            var arr = get_visible_columns()
+                            var aa = arr.concat(objKeys)
+                            var bb = aa.filter((item,pos) => aa.indexOf(item) === pos)
+                            $('#id_' + id + ' td').each(function(i) {
+                                if (bb[i] == 'crud') {
+                                    $('#crud_' + id).html(crud)
+                                } else {
+                                    if (bb[i] == 'title' || bb[i] == 'explain') {
+                                        if (data[objKeys[i]] != undefined && data[objKeys[i]] != 'undefined' && data[objKeys[i]].length > 15) {
+                                            let ids = $(this)[0]['_DT_CellIndex'];
+                                            let rowId = ids.row;
+                                            let colId = ids.column;
+                                            let short = '<span data-toggle="tooltip" title="' + data[objKeys[i]] + '" onclick="showMore(this, ' + rowId + ', ' + colId + ',\'' + data[objKeys[i]] + '\')">' + data[objKeys[i]].substr(0, 13) + '...</span>';
+                                            $(this).html(short);
+                                        } else {
+                                            $(this).text(data[objKeys[i]]);
+                                        }
+                                    } else if (bb[i] == 'license_type_ids') {
+                                        let lt = data[objKeys[i]];
+                                        let licensetypes = "{% get_licensetypes %}";
+                                        licensetypesarr = licensetypes.split(',');
+                                        if (lt != undefined && lt.length > 0) {
+                                            let ltstr = "";
+                                            for (i in lt) {
+                                                ltstr += licensetypesarr[lt[i]-1] + ",";
+                                            }
+                                            $(this).text(ltstr);
+                                        }
+                                    } else {
+                                        $(this).text(data[objKeys[i]]);
+                                    }
+                                }
+                            });
+                            var message = response['message']
+                            {#alert(message)#}
+                            $("#amessage").text(message);
+                            $("#amessagediv").show();
+                            $("#alarms-form").trigger('reset');
+                            $("#form").hide();
+                            $("#addBtn").show();
+                            $("#hideBtn").hide();
+                            console.log('');
+                        },
+                        error: function (response) {
+                            alert('error');
+                            let data = response.responseJSON['data'];
+                            const obj = JSON.parse(data);
+                            let result = [];
+                            for(var i in obj)
+                                result.push([i, obj[i][0]['message']]);
+                            {#if ($("#alarmtypes-form").next('span').length) $("input").nextAll('span').empty();#}
+                            $("#menu-form").find('span').each(function(){
+                                $(this).empty();
+                            });
+                            for (let i in result) {
+                                let key = result[i][0];
+                                let val = result[i][1];
+                                let $input = $("#id_" + key);
+                                let span1 = $input.parent().parent().find(".text-error");
+                                span1.css("color", "red");
+                                span1.text(val);
+                            }
+                        },
+                    })
+                });
+                $("#id_alarm_type_id").change(function(e) {
+                    e.stopImmediatePropagation()
+                    e.preventDefault();
+                    let alarm_type_id = $(this).val();
+                    let content_type_count = $("#content_type_count").val();
+                    $.ajax({
+                        type: 'GET',
+                        url: "{% url 'analyst:get_alarm_type' %}",
+                        data: {"alarm_type_id": alarm_type_id},
+                        success: function (response) {
+                            let form = JSON.parse(response["data"]);
+                            let ctypes = JSON.parse(response["content_types"]);
+                            let fields = form[0]["fields"];
+                            $("#id_title").val(fields['title'])
+                            $("#id_severity").val(fields["severity"]);
+                            $("#id_description").val(fields["description"]);
+                            $("#id_mitigation").val(fields["mitigation"]);
+                            $("#content_type_ids").val(fields["content_type_ids"]);
+                            {#let content_type_ids = fields["content_type_ids"];#}
+                            let chtml = '';
+                            let ctnames ='';
+                            for (let j = 1; j < content_type_count; j++) {
+                                let i = 0;
+                                for (ctype in ctypes) {
+                                    if (j == 1)
+                                        ctnames += ctypes[i]['name'] + ','
+                                    if (ctypes[i]['type'] == 'String') {
+                                        let name = ctypes[i]['name'] + "_" + j;
+                                        let form_name = ctypes[i]['form_name'];
+                                        chtml += '<div class="form-group col-12">' +
+                                            '<label class="col-12">'+form_name+'</label>' +
+                                            '<div class="input-group">' +
+                                            '<input type="text" name="'+name+'" maxlength="100" class="form-control" id="id_'+name+'>' +
+                                            '</div>' +
+                                            '<span class="text-error" style="color: rgb(255, 0, 0);"></span>' +
+                                            '</div>';
+                                    } else if (ctypes[i]['type'] == 'Date') {
+                                        let name = ctypes[i]['name'] + "_" + j;
+                                        let form_name = ctypes[i]['form_name'];
+                                        chtml += '<div class="form-group col-6">' +
+                                            '<label class="col-12">Sil'+form_name+'</label>' +
+                                            '<div class="input-group">' +
+                                            '<input type="datetime-local" name="'+name+'" class="form-control" format="%Y-%m-%d %H:%M:%ss" id="id_'+name+'">' +
+                                            '</div>' +
+                                            '<span class="text-error" style="color: rgb(255, 0, 0);"></span>' +
+                                            '</div>';
+                                        {#chtml += '<div class="form-group col-6">' +#}
+                                        {#    '<label for="'+name+'">'+form_name+'</label>' +#}
+                                        {#    '<div class="input-group">' +#}
+                                        {#    '<input type="datetime" name="'+name+'" required="" class="form-control" id="id_'+name+'">' +#}
+                                        {#    '</div>' +#}
+                                        {#    '<span class="text-error" style="color: rgb(255, 0, 0);"></span>' +#}
+                                        {#    '</div>';#}
+                                        {#chtml += '<div class="form-group col-12">' +#}
+                                        {#    '<label for="'+name+'e">'+form_name+'</label>' +#}
+                                        {#    '<div class="input-group">' +#}
+                                        {#    '<input type="datetime" name="'+name+'" required="" id="id_'+name+'">' +#}
+                                        {#    '</div>' +#}
+                                        {#    '<span class="text-error"></span>' +#}
+                                        {#    '</div>';#}
+                                    } else if (ctypes[i]['type'] == 'File') {
+                                        let name = ctypes[i]['name'] + "_" + j;
+                                        let form_name = ctypes[i]['form_name'];
+                                        chtml += '<div class="form-group col-12">' +
+                                            '<label for="'+name+'">'+form_name+'</label>' +
+                                            '<div class="input-group">' +
+                                            '<input type="file" name="'+name+'" accept="image/*" id="id_'+name+'" src="">' +
+                                            '<img id="id_'+name+'1" src="/apps/media/None" style="width: 50px; height: 50px;">' +
+                                            '</div>' +
+                                            '<span class="text-error"></span>' +
+                                            '</div>';
+                                    }
+                                    i += 1;
+                                };
+                                $("#content-" + j).html(chtml);
+                                chtml = "";
+                            };
+                            {#ctnames = ctnames.substr(0, ctnames.length - 1);#}
+                            $("#content_type_names").val(ctnames);
+                            $("#content-1-tab").click();
+                            console.log('')
+                        },
+                        error: function (response) {
+                            alert('error')
+                        }
+                    });
+                });
+                $(document).on('click', '.upd', function(e) {
+                    e.stopImmediatePropagation()
+                    e.preventDefault();
+                    let content_type_count = $("#content_type_count").val();
+                    var id = $(this).attr('itemid')
+                    url = "{% url 'analyst:alarms' %}";
+                    $.ajax({
+                        type: 'GET',
+                        url: url,
+                        data: {"id": id, "csrfmiddlewaretoken": '{{ csrf_token }}'},
+                        success: function (response) {
+                            {#alert('success');#}
+                            $("#addBtn").hide();
+                            $("#form").show();
+                            $("#hideBtn").show();
+                            $("#createbtn").hide();
+                            $("#updatebtn").show();
+                            $("#alarms-form").trigger('reset');
+                            $("#id_title").focus();
+                            var form = JSON.parse(response["data"]);
+                            var contents = response["contents"];
+                            var ct_names = response["ct_names"];
+                            $("#content_type_names").val(ct_names)
+                            var ct_form_names = response["ct_form_names"];
+                            var ct_types = response["ct_types"];
+                            let ctypes = JSON.parse(response["content_types"]);
+                            var fields = form[0]["fields"];
+                            var pk = form[0]["pk"];
+                            $('#id_title').val(fields["title"]);
+                            $('#id_id').val(pk);
+                            {#$("#id_explain").val(fields["explain"]);#}
+                            $("#id_severity").val(fields["severity"]);
+                            $("#id_alarm_type_id").val(fields["alarm_type_id"]);
+                            $("#id_is_manuel").val(fields["is_manuel"]);
+                            {#$("#id_is_manuel").prop("checked", true);#}
+                            $("#id_description").val(fields["description"]);
+                            $("#id_source").val(fields["source"]);
+                            $("#id_mitigation").val(fields["mitigation"]);
+                            $("#id_content_ids").val(fields["content_ids"]);
+                            let companies = fields["companies"];
+                            let sil = companies.length
+                            for (let i = 0; i < companies.length; i++) {
+                                $("ul input[value='" + companies[i] + "']").prop( "checked", true);
+                                {#$("#id_companies_" + companies[i]).prop( "checked", true);#}
+                            }
+                            {#$("#id_companies").find('li label :checkbox').each(function(i){#}
+                            {#    let id = $(this).val();#}
+                            {#    if (companies.find(i => i == id))#}
+                            {#        $(this).prop( "checked", true);#}
+                            {#);#}
+                            {#$("#id_is_manuel").val(fields["is_manuel"]);#}
+                            {#$("#id_monitor").val(fields["monitor"]);#}
+                            {#let content_type_ids = fields["content_type_ids"];#}
+                            {#let license_type_ids = fields["license_type_ids"];#}
+                            {#$("#id_content_type_ids").find('li label :checkbox').each(function(i){#}
+                            {#    let id = $(this).val();#}
+                            {#    if (content_type_ids.indexOf(id) > -1)#}
+                            {#        $(this).prop("checked", true);#}
+                            {#);#}
+                            {#$("#id_license_type_ids").find('li label :checkbox').each(function(i){#}
+                            {#    let id = $(this).val();#}
+                            {#    if (license_type_ids.indexOf(id) > -1)#}
+                            {#        $(this).prop("checked", true);#}
+                            {#);#}
+                            $("#id_severity").val(fields["severity"]).change();
+                            {#alert(':::>' + new Date().toJSON().slice(0,19));#}
+                            let chtml = '';
+                            let ctnames ='';
+                            for (let j = 1; j < content_type_count; j++) {
+                                let i = 0;
+                                for (ctype in ctypes) {
+                                    if (j == 1)
+                                        ctnames += ctypes[i]['name'] + ','
+                                    if (ctypes[i]['type'] == 'String') {
+                                        let name = ctypes[i]['name'] + "_" + j;
+                                        let form_name = ctypes[i]['form_name'];
+                                        chtml += '<div class="form-group col-12">' +
+                                            '<label class="col-12">'+form_name+'</label>' +
+                                            '<div class="input-group">' +
+                                            '<input type="text" name="'+name+'" maxlength="100" class="form-control" id="id_'+name+'">' +
+                                            '</div>' +
+                                            '<span class="text-error" style="color: rgb(255, 0, 0);"></span>' +
+                                            '</div>';
+                                    } else if (ctypes[i]['type'] == 'Date') {
+                                        let name = ctypes[i]['name'] + "_" + j;
+                                        let form_name = ctypes[i]['form_name'];
+                                        chtml += '<div class="form-group col-6">' +
+                                            '<label class="col-12">Sil'+form_name+'</label>' +
+                                            '<div class="input-group">' +
+                                            '<input type="datetime-local" name="'+name+'" class="form-control" format="%Y-%m-%d %H:%M:%ss" id="id_'+name+'">' +
+                                            '</div>' +
+                                            '<span class="text-error" style="color: rgb(255, 0, 0);"></span>' +
+                                            '</div>';
+                                        {#chtml += '<div class="form-group col-6">' +#}
+                                        {#    '<label for="'+name+'e">'+form_name+'</label>' +#}
+                                        {#    '<div class="input-group">' +#}
+                                        {#    '<input type="datetime" name="'+name+'" required="" class="form-control" id="id_'+name+'">' +#}
+                                        {#    '</div>' +#}
+                                        {#    '<span class="text-error" style="color: rgb(255, 0, 0);"></span>' +#}
+                                        {#    '</div>';#}
+                                        {#chtml += '<div class="form-group col-12">' +#}
+                                        {#    '<label for="'+name+'e">'+form_name+'</label>' +#}
+                                        {#    '<div class="input-group">' +#}
+                                        {#    '<input type="datetime" name="'+name+'" required="" id="id_'+name+'">' +#}
+                                        {#    '</div>' +#}
+                                        {#    '<span class="text-error"></span>' +#}
+                                        {#    '</div>';#}
+                                    } else if (ctypes[i]['type'] == 'File') {
+                                        let name = ctypes[i]['name'] + "_" + j;
+                                        let form_name = ctypes[i]['form_name'];
+                                        chtml += '<div class="form-group col-12">' +
+                                            '<label for="'+name+'">'+form_name+'</label>' +
+                                            '<div class="input-group">' +
+                                            '<input type="file" name="'+name+'" accept="image/*" id="id_'+name+'" src="">' +
+                                            '<img id="id_'+name+'1" src="/apps/media/None" style="width: 50px; height: 50px;">' +
+                                            '</div>' +
+                                            '<span class="text-error"></span>' +
+                                            '</div>';
+                                    }
+                                    i += 1;
+                                };
+                                $("#content-" + j).html(chtml);
+                                chtml = "";
+                            };
+
+                            {#let chtml = '';#}
+                            {#let ctnames ='';#}
+                            if (contents.length > 0) {
+                                for (let i = 0; i < contents.length; i++) {
+                                    for (let j = 0; j < ct_names.length; j++) {
+                                        if (ct_types[j] == 'String') {
+                                            {#let name = ctypes[i]['name'] + "_" + j;#}
+                                            {#let form_name = ctypes[i]['form_name'];#}
+                                            let name = ct_names[j] + "_" + (i + 1);
+                                            let form_name = ct_form_names[j];
+                                            let value = contents[i][j];
+                                            $("#id_" + name).val(value)
+                                        } else if (ct_types[j] == 'Date') {
+                                            let name = ct_names[j] + "_" + (i + 1);
+                                            let form_name = ct_form_names[j];
+                                            let value = contents[i][j].replace(/\..+/, '').replace('Z', '');
+                                            {#value = "2021-12-18T08:33";#}
+                                            $("#id_" + name).val(value)
+                                        } else if (ct_types[j] == 'File') {
+                                            let name = ct_names[j] + "_" + (i + 1);
+                                            let form_name = ct_form_names[j];
+                                            let value = contents[i][j];
+                                            {#$("#id_" + name).attr("src", value);#}
+                                            $("#id_" + name).attr("src", value);
+                                            $("#id_" + name + "1").attr("src",'/apps/media/'+value);
+                                        };
+                                    };
+                                    {#let cid = i + 1;#}
+                                    {#$("#content-" + cid).html(chtml);#}
+                                    {#chtml = "";#}
+                                };
+                            }
+                            {#else {#}
+                            {#    let chtml = '';#}
+                            {#    let ctnames ='';#}
+                            {#    for (let j = 1; j < content_type_count; j++) {#}
+                            {#        let i = 0;#}
+                            {#        for (ctype in ctypes) {#}
+                            {#            if (j == 1)#}
+                            {#                ctnames += ctypes[i]['name'] + ','#}
+                            {#            if (ctypes[i]['type'] == 'String') {#}
+                            {#                let name = ctypes[i]['name'] + "_" + j;#}
+                            {#                let form_name = ctypes[i]['form_name'];#}
+                            {#                chtml += '<div class="form-group col-12">' +#}
+                            {#                    '<label class="col-12">'+form_name+'</label>' +#}
+                            {#                    '<div class="input-group">' +#}
+                            {#                    '<input type="text" name="'+name+'" maxlength="100" class="form-control" id="id_'+name+'>' +#}
+                            {#                    '</div>' +#}
+                            {#                    '<span class="text-error" style="color: rgb(255, 0, 0);"></span>' +#}
+                            {#                    '</div>';#}
+                            {#            } else if (ctypes[i]['type'] == 'Date') {#}
+                            {#                let name = ctypes[i]['name'] + "_" + j;#}
+                            {#                let form_name = ctypes[i]['form_name'];#}
+                            {#                chtml += '<div class="form-group col-12">' +#}
+                            {#                    '<label for="'+name+'e">'+form_name+'</label>' +#}
+                            {#                    '<div class="input-group">' +#}
+                            {#                    '<input type="datetime" name="'+name+'" required="" id="id_'+name+'">' +#}
+                            {#                    '</div>' +#}
+                            {#                    '<span class="text-error"></span>' +#}
+                            {#                    '</div>';#}
+                            {#            } else if (ctypes[i]['type'] == 'File') {#}
+                            {#                let name = ctypes[i]['name'] + "_" + j;#}
+                            {#                let form_name = ctypes[i]['form_name'];#}
+                            {#                chtml += '<div class="form-group col-12">' +#}
+                            {#                    '<label for="'+name+'">'+form_name+'</label>' +#}
+                            {#                    '<div class="input-group">' +#}
+                            {#                    '<input type="file" name="'+name+'" accept="image/*" id="id_'+name+'" src="">' +#}
+                            {#                    '<img id="id_'+name+'1" src="" style="width: 50px; height: 50px;">' +#}
+                            {#                    '</div>' +#}
+                            {#                    '<span class="text-error"></span>' +#}
+                            {#                    '</div>';#}
+                            {#            }#}
+                            {#            i += 1;#}
+                            {#        };#}
+                            {#        $("#content-" + j).html(chtml);#}
+                            {#        chtml = "";#}
+                            {#    };#}
+                            {#;#}
+                            {#$("#content_type_names").val(ct_names);#}
+                            {#$("#content-1-tab").click();#}
+                            console.log('')
+                        },
+                        error: function (response) {
+                            console.log(response)
+                            alert("error")
+                        }
+                    });
+                });
+                $(document).on('click', '.delBtn', function(e) {
+                    e.stopImmediatePropagation()
+                    e.preventDefault();
+                    if (confirm('Are you sure to delete?')) {
+                        let id = $(this).attr('itemid')
+                        {#url = "/home/getcompany/" + id + "/"#}
+                        url = "{% url 'analyst:alarm_delete' %}";
+                        $.ajax({
+                            type: 'GET',
+                            url: url,
+                            data: {"id": id, "csrfmiddlewaretoken": '{{ csrf_token }}'},
+                            success: function (response) {
+                                {#alert("success")#}
+                                let message = response['message']
+                                var aa = $("#id_" + id);
+                                table.row(aa).remove().draw();
+                                $("#amessage").text(message);
+                                $("#amessagediv").show();
+                            },
+                            error: function (response) {
+                                console.log(response)
+                                alert("error")
+                            }
+                        });
+                    };
+                });
+                $(document).delegate(':file', 'change', function() {
+                    let id = $(this).attr('id');
+                    var pathwithfilename = $("#" + id).val();
+                    var filename = pathwithfilename.substring(12);
+                    $("#" + id + "1").attr("src",'/apps/media/'+filename);
+                });
+
+                $("#id_companies_00").change(function() {
+                    if($(this).is(":checked"))
+                    {
+                        $('ul#id_companies :checkbox').each(function () {
+                            $(this).prop("checked", true)
+                        });
+                    } else {
+                        $('ul#id_companies :checkbox').each(function () {
+                            $(this).prop("checked", false)
+                        });
+                    }
+                });
+                $("#id_severity").autocomplete({
+                    source: {{ severities|safe }},
+                    scroll: false,
+                    minLength:0
+                }).bind('focus', function(){ $(this).autocomplete("search"); } );
+                $( "#id_alarm_type_id" ).autocomplete({
+                    source: {{ alarmtypes|safe }},
+                    scroll: false,
+                    minLength:0
+                }).bind('focus', function(){ $(this).autocomplete("search"); } );
+                $("#addBtn").click(function(e) {
+                    e.preventDefault();
+                    $("#form").show();
+                    $("#hideBtn").show();
+                    $("#createbtn").show();
+                    $("#updatebtn").hide();
+                    $(this).hide();
+                });
+                $("#hideBtn").click(function(e) {
+                    e.preventDefault();
+                    $("#form span").text("");
+                    $("#form").hide();
+                    $("#alarms-form").trigger('reset');
+                    $("#addBtn").show();
+                    $("#createbtn").hide();
+                    $("#updatebtn").show();
+                    {#$('span').text('');#}
+                    $(this).hide();
+                });
+
+                table = $('#example').DataTable( {
+                    lengthMenu: [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
+                    stateSave: true,
+                    {#stateDuration: -1,#}
+                    scrollX: true,
+                    {#paging: true,#}
+                    {#searching: false,#}
+                    {#"scrollY": "200px",#}
+                    {#"paging": false,#}
+                    dom: 'Blfrtip',
+                    columns: [
+                        {
+                            className:      'dt-control',
+                            orderable:      false,
+                            data:           null,
+                            defaultContent: ''
+                        },
+                        { name: "crud" },
+                        { name: "title" },
+                        {#{ name: "explain" },#}
+                        { name: "severity" },
+                        {#{ name: "license_type_ids" },#}
+                        { name: "update_date" },
+                        { name: "is_manuel" },
+                        {#{ name: "monitor" },#}
+                        { name: "description" },
+                        { name: "mitigation" },
+                        { name: "content_ids" },
+                    ],
+                    columnDefs: [
+                        {
+                            targets: [ 0,1,7 ],
+                            className: 'noVis'
+                        },
+                        {
+                            targets: [ 7 ],
+                            visible: false,
+                            searchable: false
+                        },
+                        { targets: [2],
+                            render: function ( data, type, row, meta ) {
+                                if (type === 'display') {
+                                    if ( data != "undefined" && data != undefined && data.length > 15)  {
+                                        return '<span data-toggle="tooltip" title="'+data+'" onclick="showMore(this, ' + meta.row + ',' + meta.col + ',\'' + data +'\')">' + data.substr( 0, 13 ) + '...</span>';
+                                        {#'<button class="more-button" data-toggle="tooltip" title="'+data+'" onclick="showMore(this, ' + meta.row + ',' + meta.col + ')">...</button>' ;#}
+                                    } else {
+                                        return data;
+                                    }
+                                } else {
+                                    return data;
+                                }
+                            }
+                        },
+                    ],
+                    buttons: [
+                        {
+                            extend: 'colvis',
+                            columns: ':not(.noVis)'
+                        }
+                    ],
+                });
+                $('#example tbody').on('click', 'td.dt-control', function () {
+                    var tr = $(this).closest('tr');
+                    var row = table.row( tr );
+                    if ( row.child.isShown() ) {
+                        // This row is already open - close it
+                        row.child.hide();
+                        tr.removeClass('shown');
+                    }
+                    else {
+                        // Open this row
+                        row.child( format(row.data()) ).show();
+                        tr.addClass('shown');
+                    }
+                } );
+            });
+            function get_visible_columns() {
+                var all_columns = table.settings().init().columns;
+                var visible_columns = [];
+                for (var i in all_columns) {
+                    if (table.column(all_columns[i].name + ':name').visible()) {
+                        visible_columns.push(all_columns[i].name);
+                    }
+                }
+                {#alert(visible_columns)#}
+                return visible_columns
+                {#return visible_columns.join(', ');#}
+            }
+            function showMore(node, rowId, colId, fullText) {
+                var rowData = $('#example').DataTable().rows( rowId ).data().toArray()[0];
+                {#var fullText = rowData[colId];#}
+                $(node.parentNode).text( fullText );
+            }
+            function format ( d ) {
+                // `d` is the original data object for the row
+                {#1: "<a href=\"#\" class=\"upd\" id=\"Button22\" itemid=\"22\">\n                                                    <i class=\"fas fa-pen\" style=\"font-size: 18px; color: #6C7AE0\" data-toggle=\"tooltip\" title=\"Update\"></i>\n                                                </a>\n                                                <a href=\"#\" class=\"delBtn\" id=\"Button22\" itemid=\"22\">\n                                                    <i class=\"fas fa-trash-alt\" style=\"font-size: 18px; color: #ce0f0f\" data-toggle=\"tooltip\" title=\"Delete\"></i>\n                                                </a>"#}
+                {#2: "aaaaaaaaaa"#}
+                {#3: "wwwwwwwwww"#}
+                {#4: "High"#}
+                {#5: "['3']"#}
+                {#6: "Dec. 12, 2021, 5:57 a.m."#}
+                {#7: "True"#}
+                {#8: "True"#}
+                {#9: "zscxzc"#}
+                {#10: "xzcxzc"#}
+                {#11: "['70']"#}
+                {#DT_RowId: "id_22"#}
+                var contentids = d[11];
+                // GET AJAX request
+                let contents = '';
+                $.ajax({
+                    async: false,
+                    type: 'GET',
+                    url: "{% url 'analyst:get_contents' %}",
+                    data: {"contentids": contentids},
+                    success: function (response) {
+                        contents = response['data'];
+                        {#alert('success' + contents)#}
+                        // if not valid user, alert the user
+                        {#if(response["valid"]){#}
+                        {#    alert("You cannot create a friend with same nick name");#}
+                        {#    var nickName = $("#id_nick_name");#}
+                        {#    nickName.val("")#}
+                        {#    nickName.focus()#}
+                        {##}
+                    },
+                    error: function (response) {
+                        alert('error')
+                    }
+                });
+                return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
+                    '<tr>'+
+                    '<td>Description:</td>'+
+                    '<td>'+d[9]+'</td>'+
+                    '</tr>'+
+                    '<tr>'+
+                    '<td>Mitigation:</td>'+
+                    '<td>'+d[10]+'</td>'+
+                    '</tr>'+
+                    '<tr>'+
+                    '<td>Contents:</td>'+
+                    '<td>'+contents+'</td>'+
+                    '</tr>'+
+                    '<tr>'+
+                    '<td>Extra info:</td>'+
+                    '<td>And any further details here (images etc)...</td>'+
+                    '</tr>'+
+                    '</table>';
+            }
+        </script>
+    {% endblock script %}
+{% endblock content %}

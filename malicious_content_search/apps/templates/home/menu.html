@@ -1,0 +1,82 @@
+{% extends "layouts/base-fullscreen.html" %}
+{#{% extends "layouts/base.html" %}#}
+{% load static %}
+{% block title %} Company {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+{% endblock stylesheets %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-12 mb-4">
+            <div class="card border-0 shadow components-section">
+                <div class="card-header">
+                    <div class="d-flex">
+                        <div class="me-auto">
+                            {% if islem == 'update' %}
+                                <h1 class="h6">Update Menu</h1>
+                            {%  else %}
+                                <h1 class="h6">Create Menu</h1>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-sm-center">
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-left: 0px;margin-right: 0px">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <div style="width:100%">
+                            <div style="margin: 0 auto; text-align: center;">
+                                {% if islem == 'update' %}
+                                    <button type="submit" name="menu" class="btn btn-primary" onclick="return confirm('Are you sure to update?')" style="background-color: #A64AC9">Update Menu</button>
+                                {% else %}
+                                    <button type="submit" name="menu" class="btn btn-primary" style="text-align:center;background-color: #A64AC9">Create Menu</button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% block scripts %}
+        {#        {{ block.super }}#}
+        <script>
+            jQuery(function($) {
+            });
+
+            function HideModalDiv()
+            {
+                var bcgDiv = document.getElementById("divBackground");
+                bcgDiv.style.display="none";
+            }
+            function OnClose()
+            {
+                if(window.opener != null && !window.opener.closed)
+                {
+                    {#window.opener.location.reload();#}
+                    window.opener.HideModalDiv();
+                }
+            }
+            function refreshParent() {
+                window.opener.location.reload();
+            }
+            window.onunload = refreshParent;
+        </script>
+    {% endblock %}
+{% endblock content %}
+
+{% block javascripts %}
+{% endblock javascripts %}
